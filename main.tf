@@ -47,11 +47,11 @@ locals {
   handler = lookup(local.runtime_base_handler_map, local.runtime_base, var.handler)
   layers = {
     extension = ["${local.layer_name_base}:Datadog-Extension${local.layer_suffix}:${var.datadog_extension_layer_version}"]
-    lambda    = local.layer_runtime == null ? [] : ["${local.layer_name_base}:${local.layer_runtime}${local.layer_suffix}:${local.datadog_lambda_layer_version}"]
+    lambda    = local.layer_runtime == null ? [] : ["${local.layer_name_base}:${local.layer_runtime}${local.runtime_base == "nodejs" ? "" : local.layer_suffix}:${local.datadog_lambda_layer_version}"]
   }
   layer_name_base = "arn:aws:lambda:${data.aws_region.current.name}:464622532012:layer"
   layer_runtime   = lookup(local.runtime_layer_map, var.runtime, null)
-  layer_suffix    = local.runtime_base == "nodejs" ? "" : lookup(local.architecture_layer_suffix_map, var.architectures[0])
+  layer_suffix    = lookup(local.architecture_layer_suffix_map, var.architectures[0])
   tags = {
     dd_terraform_module = "0.0.0"
   }
