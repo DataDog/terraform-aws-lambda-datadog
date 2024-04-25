@@ -133,17 +133,17 @@ resource "aws_lambda_function" "this" {
     }
   }
 
-  memory_size                        = var.memory_size
-  package_type                       = var.package_type
-  publish                            = var.publish
-  reserved_concurrent_executions     = var.reserved_concurrent_executions
-  role                               = var.role
-  runtime                            = var.runtime
-  s3_bucket                          = var.s3_bucket
-  s3_key                             = var.s3_key
-  s3_object_version                  = var.s3_object_version
-  skip_destroy                       = var.skip_destroy
-  source_code_hash                   = var.source_code_hash
+  memory_size                    = var.memory_size
+  package_type                   = var.package_type
+  publish                        = var.publish
+  reserved_concurrent_executions = var.reserved_concurrent_executions
+  role                           = var.role
+  runtime                        = var.runtime
+  s3_bucket                      = var.s3_bucket
+  s3_key                         = var.s3_key
+  s3_object_version              = var.s3_object_version
+  skip_destroy                   = var.skip_destroy
+  source_code_hash               = var.source_code_hash
 
   dynamic "snap_start" {
     for_each = var.snap_start_apply_on != null ? [true] : []
