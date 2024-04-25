@@ -52,7 +52,7 @@ variable "description" {
 variable "environment_variables" {
   description = "Map of environment variables that are accessible from the function code during execution."
   type        = map(string)
-  default     = null
+  default     = {}
 }
 
 variable "ephemeral_storage_size" {
@@ -82,6 +82,7 @@ variable "filename" {
 variable "function_name" {
   description = "Unique name for your Lambda Function"
   type        = string
+  default     = null
 }
 
 variable "handler" {
@@ -92,13 +93,13 @@ variable "handler" {
 
 variable "image_config_command" {
   description = "Parameters that you want to pass in with entry_point."
-  type        = string
+  type        = list(string)
   default     = null
 }
 
 variable "image_config_entry_point" {
   description = "Entry point to your application, which is typically the location of the runtime executable."
-  type        = string
+  type        = list(string)
   default     = null
 }
 
@@ -170,13 +171,13 @@ variable "publish" {
 
 variable "replace_security_groups_on_destroy" {
   description = "Whether to replace the security groups on associated lambda network interfaces upon destruction."
-  type        = string
+  type        = bool
   default     = null
 }
 
 variable "replacement_security_group_ids" {
   description = "List of security group IDs to assign to orphaned Lambda function network interfaces upon destruction."
-  type        = string
+  type        = set(string)
   default     = null
 }
 
@@ -189,6 +190,7 @@ variable "reserved_concurrent_executions" {
 variable "role" {
   description = "Amazon Resource Name (ARN) of the function's execution role. The role provides the function's identity and access to AWS services and resources."
   type        = string
+  default     = null
 }
 
 variable "runtime" {
@@ -251,14 +253,20 @@ variable "tracing_config_mode" {
   default     = null
 }
 
+variable "vpc_config_ipv6_allowed_for_dual_stack" {
+  description = "Allows outbound IPv6 traffic on VPC functions that are connected to dual-stack subnets."
+  type        = bool
+  default     = null
+}
+
 variable "vpc_config_security_group_ids" {
   description = "List of security group IDs associated with the Lambda function."
-  type        = string
+  type        = set(string)
   default     = null
 }
 
 variable "vpc_config_subnet_ids" {
   description = "List of subnet IDs associated with the Lambda function."
-  type        = string
+  type        = set(string)
   default     = null
 }

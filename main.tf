@@ -58,7 +58,17 @@ locals {
 }
 
 resource "aws_lambda_function" "this" {
-  architectures = var.architectures
+  architectures           = var.architectures
+  code_signing_config_arn = var.code_signing_config_arn
+
+  dynamic "dead_letter_config" {
+    for_each = var.dead_letter_config_target_arn != null ? [true] : []
+    content {
+      target_arn = var.dead_letter_config_target_arn
+    }
+  }
+
+  description = var.description
 
   # User defined environment variables take precedence over datadog defined environment variables
   # This allows users the option to override default behavior
@@ -70,9 +80,39 @@ resource "aws_lambda_function" "this" {
     )
   }
 
+  dynamic "ephemeral_storage" {
+    for_each = var.ephemeral_storage_size != null ? [true] : []
+
+    content {
+      size = var.ephemeral_storage_size
+    }
+  }
+
+  dynamic "file_system_config" {
+    for_each = var.file_system_config_arn != null && var.file_system_config_local_mount_path != null ? [true] : []
+
+    content {
+      arn              = var.file_system_config_arn
+      local_mount_path = var.file_system_config_local_mount_path
+    }
+  }
+
   filename      = var.filename
   function_name = var.function_name
   handler       = local.handler
+
+  dynamic "image_config" {
+    for_each = var.image_config_command != null || var.image_config_entry_point != null || var.image_config_working_directory != null ? [true] : []
+
+    content {
+      command           = var.image_config_command
+      entry_point       = var.image_config_entry_point
+      working_directory = var.image_config_working_directory
+    }
+  }
+
+  image_uri   = var.image_uri
+  kms_key_arn = var.kms_key_arn
 
   # Datadog layers are defined in single element lists
   # This allows for runtimes where a lambda layer is not needed by concatenating an empty list
@@ -82,9 +122,38 @@ resource "aws_lambda_function" "this" {
     var.layers
   )
 
-  role    = var.role
-  runtime = var.runtime
-  timeout = var.timeout
+  dynamic "logging_config" {
+    for_each = var.logging_config_log_format != null ? [true] : []
+
+    content {
+      application_log_level = var.logging_config_log_format == "Text" ? null : var.logging_config_application_log_level
+      log_group             = var.logging_config_log_group
+      log_format            = var.logging_config_log_format
+      system_log_level      = var.logging_config_log_format == "Text" ? null : var.logging_config_system_log_level
+    }
+  }
+
+  memory_size                        = var.memory_size
+  package_type                       = var.package_type
+  publish                            = var.publish
+  replace_security_groups_on_destroy = var.replace_security_groups_on_destroy
+  replacement_security_group_ids     = var.replacement_security_group_ids
+  reserved_concurrent_executions     = var.reserved_concurrent_executions
+  role                               = var.role
+  runtime                            = var.runtime
+  s3_bucket                          = var.s3_bucket
+  s3_key                             = var.s3_key
+  s3_object_version                  = var.s3_object_version
+  skip_destroy                       = var.skip_destroy
+  source_code_hash                   = var.source_code_hash
+
+  dynamic "snap_start" {
+    for_each = var.snap_start_apply_on != null ? [true] : []
+
+    content {
+      apply_on = var.snap_start_apply_on
+    }
+  }
 
   # Datadog defined tags take precedence over user defined tags
   # This is to ensure that the dd_terraform_module tag is set correctly
@@ -92,4 +161,24 @@ resource "aws_lambda_function" "this" {
     var.tags,
     local.tags
   )
+
+  timeout = var.timeout
+
+  dynamic "tracing_config" {
+    for_each = var.tracing_config_mode != null ? [true] : []
+
+    content {
+      mode = var.tracing_config_mode
+    }
+  }
+
+  dynamic "vpc_config" {
+    for_each = var.vpc_config_security_group_ids != null && var.vpc_config_subnet_ids != null ? [true] : []
+
+    content {
+      ipv6_allowed_for_dual_stack = var.vpc_config_ipv6_allowed_for_dual_stack
+      security_group_ids          = var.vpc_config_security_group_ids
+      subnet_ids                  = var.vpc_config_subnet_ids
+    }
+  }
 }
