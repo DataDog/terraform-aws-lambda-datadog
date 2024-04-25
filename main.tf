@@ -136,8 +136,6 @@ resource "aws_lambda_function" "this" {
   memory_size                        = var.memory_size
   package_type                       = var.package_type
   publish                            = var.publish
-  replace_security_groups_on_destroy = var.replace_security_groups_on_destroy
-  replacement_security_group_ids     = var.replacement_security_group_ids
   reserved_concurrent_executions     = var.reserved_concurrent_executions
   role                               = var.role
   runtime                            = var.runtime

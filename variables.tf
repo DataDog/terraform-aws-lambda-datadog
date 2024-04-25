@@ -169,18 +169,6 @@ variable "publish" {
   default     = null
 }
 
-variable "replace_security_groups_on_destroy" {
-  description = "Whether to replace the security groups on associated lambda network interfaces upon destruction."
-  type        = bool
-  default     = null
-}
-
-variable "replacement_security_group_ids" {
-  description = "List of security group IDs to assign to orphaned Lambda function network interfaces upon destruction."
-  type        = set(string)
-  default     = null
-}
-
 variable "reserved_concurrent_executions" {
   description = "Amount of reserved concurrent executions for this lambda function."
   type        = number
