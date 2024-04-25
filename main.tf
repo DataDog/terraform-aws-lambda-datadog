@@ -60,8 +60,8 @@ locals {
 resource "aws_lambda_function" "this" {
   architectures = var.architectures
 
-  # user defined environment variables take precedence over datadog defined environment variables
-  # this is to allow users the option to override default behavior
+  # User defined environment variables take precedence over datadog defined environment variables
+  # This allows users the option to override default behavior
   environment {
     variables = merge(
       local.environment_variables.common,
@@ -74,8 +74,8 @@ resource "aws_lambda_function" "this" {
   function_name = var.function_name
   handler       = local.handler
 
-  # datadog layers are defined in single element lists
-  # this allows for runtimes where a lambda layer is not needed by concatenating an empty list
+  # Datadog layers are defined in single element lists
+  # This allows for runtimes where a lambda layer is not needed by concatenating an empty list
   layers = concat(
     local.layers.extension,
     local.layers.lambda,
@@ -86,8 +86,8 @@ resource "aws_lambda_function" "this" {
   runtime = var.runtime
   timeout = var.timeout
 
-  # datadog defined tags take precedence over user defined tags
-  # this is to enforce that dd_terraform_module is set correctly
+  # Datadog defined tags take precedence over user defined tags
+  # This is to ensure that the dd_terraform_module tag is set correctly
   tags = merge(
     var.tags,
     local.tags
