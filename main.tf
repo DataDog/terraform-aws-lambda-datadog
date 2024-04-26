@@ -155,7 +155,7 @@ resource "aws_lambda_function" "this" {
   }
 
   # Datadog defined tags take precedence over user defined tags
-  # This is to ensure that the dd_terraform_module tag is set correctly
+  # This is to ensure that the dd_sls_terraform_module tag is set correctly
   tags = merge(
     var.tags,
     local.tags

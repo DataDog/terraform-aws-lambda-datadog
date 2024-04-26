@@ -1,11 +1,11 @@
-output "lambda_arn" {
-  value = module.example_lambda_function.lambda_arn
+output "arn" {
+  value = module.example_lambda_function.arn
 }
 
-output "lambda_invoke_arn" {
-  value = module.example_lambda_function.lambda_invoke_arn
+output "invoke_arn" {
+  value = module.example_lambda_function.invoke_arn
 }
 
-output "lambda_name" {
-  value = module.example_lambda_function.lambda_name
+output "function_name" {
+  value = module.example_lambda_function.function_name
 }
