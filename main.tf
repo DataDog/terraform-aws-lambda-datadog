@@ -38,7 +38,6 @@ locals {
   datadog_lambda_layer_version = lookup(local.runtime_base_layer_version_map, local.runtime_base, null)
   environment_variables = {
     common = {
-      DD_LOG_LEVEL               = "INFO"
       DD_SERVERLESS_LOGS_ENABLED = "true"
       DD_SERVICE                 = var.function_name
       DD_SITE                    = "datadoghq.com"
@@ -55,7 +54,7 @@ locals {
   layer_runtime   = lookup(local.runtime_layer_map, var.runtime, null)
   layer_suffix    = lookup(local.architecture_layer_suffix_map, var.architectures[0])
   tags = {
-    dd_terraform_module = "0.0.0"
+    dd_sls_terraform_module = "0.0.0"
   }
 }
 
