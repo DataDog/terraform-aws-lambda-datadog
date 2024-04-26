@@ -61,7 +61,6 @@ module "example_lambda_function" {
     "DD_API_KEY_SECRET_ARN" : var.secret_arn
     "DD_ENV" : "dev"
     "DD_LOG_LEVEL" : "DEBUG"
-    "DD_SERVICE" : var.service_name
     "DD_VERSION" : "1.0.0"
   }
 

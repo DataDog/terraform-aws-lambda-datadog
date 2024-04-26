@@ -38,9 +38,11 @@ locals {
   datadog_lambda_layer_version = lookup(local.runtime_base_layer_version_map, local.runtime_base, null)
   environment_variables = {
     common = {
-      DD_TRACE_ENABLED           = "true"
+      DD_LOG_LEVEL               = "INFO"
       DD_SERVERLESS_LOGS_ENABLED = "true"
+      DD_SERVICE                 = var.function_name
       DD_SITE                    = "datadoghq.com"
+      DD_TRACE_ENABLED           = "true"
     }
     runtime = lookup(local.runtime_base_environment_variable_map, local.runtime_base, {})
   }
