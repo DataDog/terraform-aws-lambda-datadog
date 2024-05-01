@@ -4,6 +4,6 @@ variable "secret_arn" {
 }
 
 variable "service_name" {
-  description = "Service Name"
+  description = "Service used to filter for resources in Datadog"
   type        = string
 }
