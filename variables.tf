@@ -80,7 +80,7 @@ variable "filename" {
 }
 
 variable "function_name" {
-  description = "Unique name for your Lambda Function"
+  description = "Unique name for your Lambda Function."
   type        = string
   default     = null
 }
@@ -211,14 +211,14 @@ variable "skip_destroy" {
   default     = null
 }
 
-variable "source_code_hash" {
-  description = "Used to trigger updates. Must be set to a base64-encoded SHA256 hash of the package file specified with either filename or s3_key."
+variable "snap_start_apply_on" {
+  description = "Conditions where snap start is enabled."
   type        = string
   default     = null
 }
 
-variable "snap_start_apply_on" {
-  description = "Conditions where snap start is enabled."
+variable "source_code_hash" {
+  description = "Used to trigger updates. Must be set to a base64-encoded SHA256 hash of the package file specified with either filename or s3_key."
   type        = string
   default     = null
 }
