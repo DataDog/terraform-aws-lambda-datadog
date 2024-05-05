@@ -57,7 +57,7 @@ locals {
   layer_runtime   = lookup(local.runtime_layer_map, var.runtime, null)
   layer_suffix    = lookup(local.architecture_layer_suffix_map, var.architectures[0])
   tags = {
-    dd_sls_terraform_module = "0.0.0"
+    dd_sls_terraform_module = "0.1.0"
   }
 }
 
