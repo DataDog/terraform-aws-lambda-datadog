@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda_role" {
-  name = "terraform-example-node-${var.service_name}-role"
+  name = "terraform-example-node-${var.datadog_service_name}-role"
   assume_role_policy = jsonencode(
     {
       "Version" : "2012-10-17",
@@ -17,7 +17,7 @@ resource "aws_iam_role" "lambda_role" {
 }
 
 resource "aws_iam_policy" "secrets_manager_read_policy" {
-  name        = "terraform-example-node-${var.service_name}-secrets-manager-policy"
+  name        = "terraform-example-node-${var.datadog_service_name}-secrets-manager-policy"
   description = "Policy to allow read access to Secrets Manager"
   policy = jsonencode({
     Version = "2012-10-17"
@@ -26,7 +26,7 @@ resource "aws_iam_policy" "secrets_manager_read_policy" {
         Sid      = "ReadSecret"
         Effect   = "Allow"
         Action   = "secretsmanager:GetSecretValue"
-        Resource = var.secret_arn
+        Resource = var.datadog_secret_arn
       }
     ]
   })
@@ -52,16 +52,16 @@ module "example_lambda_function" {
   source = "../../"
 
   filename      = "${path.module}/build/hello-node.zip"
-  function_name = "terraform-example-node-${var.service_name}-function"
+  function_name = "terraform-example-node-${var.datadog_service_name}-function"
   role          = aws_iam_role.lambda_role.arn
   handler       = "index.lambda_handler"
   runtime       = "nodejs20.x"
   memory_size   = 256
 
   environment_variables = {
-    "DD_API_KEY_SECRET_ARN" : var.secret_arn
+    "DD_API_KEY_SECRET_ARN" : var.datadog_secret_arn
     "DD_ENV" : "dev"
-    "DD_SERVICE" : var.service_name
+    "DD_SERVICE" : var.datadog_service_name
     "DD_VERSION" : "1.0.0"
   }
 }

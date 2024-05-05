@@ -7,8 +7,8 @@ A simple Python Lambda function with out of the box Datadog instrumentation.
 * Create a [Datadog API Key](https://app.datadoghq.com/organization-settings/api-keys)
 * Create a secret in [AWS Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html) and add the Datadog API Key as the secret value in plaintext
 * Create a `terraform.tfvars` file
-  - Set the `secret_arn` to the arn of the secret you just created
-  - Set the `service_name` to the name of the service you want to use to filter for the resource in Datadog
+  - Set the `datadog_secret_arn` to the arn of the secret you just created
+  - Set the `datadog_service_name` to the name of the service you want to use to filter for the resource in Datadog
 * Run the following commands
 
 ```
