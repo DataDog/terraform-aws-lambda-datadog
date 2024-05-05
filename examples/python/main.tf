@@ -57,12 +57,12 @@ module "example_lambda_function" {
   handler       = "app.lambda_handler"
   runtime       = "python3.11"
   architectures = ["arm64"]
-  memory_size = 256
+  memory_size   = 256
 
   environment_variables = {
     "DD_API_KEY_SECRET_ARN" : var.secret_arn
     "DD_ENV" : "dev"
-    "DD_SERVICE": var.service_name
+    "DD_SERVICE" : var.service_name
     "DD_VERSION" : "1.0.0"
   }
 }
