@@ -31,7 +31,7 @@ module "example_lambda_function" {
     "DD_VERSION" : "1.0.0"
   }
 
-  datadog_extension_layer_version = 56
+  datadog_extension_layer_version = 57
   datadog_python_layer_version = 94
 }
 ```
@@ -55,7 +55,7 @@ module "example_lambda_function" {
     "DD_VERSION" : "1.0.0"
   }
 
-  datadog_extension_layer_version = 56
+  datadog_extension_layer_version = 57
   datadog_node_layer_version = 108
 }
 ```
@@ -158,7 +158,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_architectures"></a> [architectures](#input\_architectures) | Instruction set architecture for your Lambda function. Valid values are ["x86\_64"] and ["arm64"]. | `list(string)` | <pre>["x86_64"]</pre> | no |
 | <a name="input_code_signing_config_arn"></a> [code\_signing\_config\_arn](#input\_code\_signing\_config\_arn) | To enable code signing for this function, specify the ARN of a code-signing configuration. A code-signing configuration includes a set of signing profiles, which define the trusted publishers for this function. | `string` | `null` | no |
-| <a name="input_datadog_extension_layer_version"></a> [datadog\_extension\_layer\_version](#input\_datadog\_extension\_layer\_version) | Version for the Datadog Extension Layer | `number` | `56` | no |
+| <a name="input_datadog_extension_layer_version"></a> [datadog\_extension\_layer\_version](#input\_datadog\_extension\_layer\_version) | Version for the Datadog Extension Layer | `number` | `57` | no |
 | <a name="input_datadog_node_layer_version"></a> [datadog\_node\_layer\_version](#input\_datadog\_node\_layer\_version) | Version for the Datadog Node Layer | `number` | `108` | no |
 | <a name="input_datadog_python_layer_version"></a> [datadog\_python\_layer\_version](#input\_datadog\_python\_layer\_version) | Version for the Datadog Python Layer | `number` | `94` | no |
 | <a name="input_dead_letter_config_target_arn"></a> [dead\_letter\_config\_target\_arn](#input\_dead\_letter\_config\_target\_arn) | ARN of an SNS topic or SQS queue to notify when an invocation fails. | `string` | `null` | no |
