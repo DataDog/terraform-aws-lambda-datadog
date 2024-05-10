@@ -85,7 +85,7 @@ check "runtime_support" {
         "python3.12",
       ],
     var.runtime)
-    error_message = "${var.runtime} runtime is not supported by this module"
+    error_message = "${var.runtime} Lambda runtime is not supported by the Datadog Terraform module for AWS Lambda"
   }
 }
 
