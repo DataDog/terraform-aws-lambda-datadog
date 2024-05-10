@@ -35,7 +35,17 @@ locals {
 }
 
 locals {
-  datadog_lambda_layer_version = lookup(local.runtime_base_layer_version_map, local.runtime_base, null)
+  datadog_extension_layer_arn    = "${local.datadog_layer_name_base}:Datadog-Extension${local.datadog_extension_layer_suffix}:${var.datadog_extension_layer_version}"
+  datadog_extension_layer_suffix = local.datadog_layer_suffix
+
+  datadog_lambda_layer_arn     = "${local.datadog_layer_name_base}:${local.datadog_lambda_layer_runtime}${local.datadog_lambda_layer_suffix}:${local.datadog_lambda_layer_version}"
+  datadog_lambda_layer_suffix  = local.runtime_base == "nodejs" ? "" : lookup(local.architecture_layer_suffix_map, var.architectures[0]) # nodejs doesn't have a separate layer for ARM
+  datadog_lambda_layer_runtime = lookup(local.runtime_layer_map, var.runtime, "")
+  datadog_lambda_layer_version = lookup(local.runtime_base_layer_version_map, local.runtime_base, "")
+
+  datadog_layer_name_base = "arn:aws:lambda:${data.aws_region.current.name}:464622532012:layer"
+  datadog_layer_suffix    = lookup(local.architecture_layer_suffix_map, var.architectures[0])
+
   environment_variables = {
     common = {
       DD_CAPTURE_LAMBDA_PAYLOAD  = "false"
@@ -48,16 +58,34 @@ locals {
     }
     runtime = lookup(local.runtime_base_environment_variable_map, local.runtime_base, {})
   }
+
   handler = lookup(local.runtime_base_handler_map, local.runtime_base, var.handler)
+
   layers = {
-    extension = ["${local.layer_name_base}:Datadog-Extension${local.layer_suffix}:${var.datadog_extension_layer_version}"]
-    lambda    = local.layer_runtime == null ? [] : ["${local.layer_name_base}:${local.layer_runtime}${local.runtime_base == "nodejs" ? "" : local.layer_suffix}:${local.datadog_lambda_layer_version}"]
+    extension = [local.datadog_extension_layer_arn]
+    lambda    = local.datadog_lambda_layer_runtime == "" ? [] : [local.datadog_lambda_layer_arn]
   }
-  layer_name_base = "arn:aws:lambda:${data.aws_region.current.name}:464622532012:layer"
-  layer_runtime   = lookup(local.runtime_layer_map, var.runtime, null)
-  layer_suffix    = lookup(local.architecture_layer_suffix_map, var.architectures[0])
+
   tags = {
     dd_sls_terraform_module = "1.0.0"
+  }
+}
+
+check "runtime_support" {
+  assert {
+    condition = contains(
+      [
+        "nodejs16.x",
+        "nodejs18.x",
+        "nodejs20.x",
+        "python3.8",
+        "python3.9",
+        "python3.10",
+        "python3.11",
+        "python3.12",
+      ],
+    var.runtime)
+    error_message = "${var.runtime} runtime is not supported by this module"
   }
 }
 
