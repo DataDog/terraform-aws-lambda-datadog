@@ -39,7 +39,7 @@ locals {
   datadog_extension_layer_suffix = local.datadog_layer_suffix
 
   datadog_lambda_layer_arn     = "${local.datadog_layer_name_base}:${local.datadog_lambda_layer_runtime}${local.datadog_lambda_layer_suffix}:${local.datadog_lambda_layer_version}"
-  datadog_lambda_layer_suffix  = local.runtime_base == "nodejs" ? "" : lookup(local.architecture_layer_suffix_map, var.architectures[0]) # nodejs doesn't have a separate layer for ARM
+  datadog_lambda_layer_suffix  = local.runtime_base == "nodejs" ? "" : local.datadog_layer_suffix # nodejs doesn't have a separate layer for ARM
   datadog_lambda_layer_runtime = lookup(local.runtime_layer_map, var.runtime, "")
   datadog_lambda_layer_version = lookup(local.runtime_base_layer_version_map, local.runtime_base, "")
 
