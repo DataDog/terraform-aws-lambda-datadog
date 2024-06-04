@@ -58,11 +58,6 @@ output "image_config" {
   value       = aws_lambda_function.this.image_config
 }
 
-output "image_uri" {
-  description = "ECR image URI containing the function's deployment package."
-  value       = aws_lambda_function.this.image_uri
-}
-
 output "invoke_arn" {
   description = "ARN to be used for invoking Lambda Function from API Gateway."
   value       = aws_lambda_function.this.invoke_arn

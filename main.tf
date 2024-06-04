@@ -85,7 +85,14 @@ check "runtime_support" {
         "python3.12",
       ],
     var.runtime)
-    error_message = "${var.runtime} Lambda runtime is not supported by the Datadog Terraform module for AWS Lambda"
+    error_message = "${var.runtime} Lambda runtime is not supported by the lambda-datadog Terraform module"
+  }
+}
+
+check "container_image_support" {
+  assert {
+    condition     = var.package_type == "Image"
+    error_message = "Container images are not supported by the lambda-datadog Terraform module"
   }
 }
 
@@ -143,7 +150,6 @@ resource "aws_lambda_function" "this" {
     }
   }
 
-  image_uri   = var.image_uri
   kms_key_arn = var.kms_key_arn
 
   # Datadog layers are defined in single element lists

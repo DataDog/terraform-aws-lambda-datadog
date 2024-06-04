@@ -109,12 +109,6 @@ variable "image_config_working_directory" {
   default     = null
 }
 
-variable "image_uri" {
-  description = "ECR image URI containing the function's deployment package."
-  type        = string
-  default     = null
-}
-
 variable "kms_key_arn" {
   description = "Amazon Resource Name (ARN) of the AWS Key Management Service (KMS) key that is used to encrypt environment variables."
   type        = string

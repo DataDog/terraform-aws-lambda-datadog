@@ -173,7 +173,6 @@ No modules.
 | <a name="input_image_config_command"></a> [image\_config\_command](#input\_image\_config\_command) | Parameters that you want to pass in with entry\_point. | `list(string)` | `null` | no |
 | <a name="input_image_config_entry_point"></a> [image\_config\_entry\_point](#input\_image\_config\_entry\_point) | Entry point to your application, which is typically the location of the runtime executable. | `list(string)` | `null` | no |
 | <a name="input_image_config_working_directory"></a> [image\_config\_working\_directory](#input\_image\_config\_working\_directory) | Working directory. | `string` | `null` | no |
-| <a name="input_image_uri"></a> [image\_uri](#input\_image\_uri) | ECR image URI containing the function's deployment package. | `string` | `null` | no |
 | <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | Amazon Resource Name (ARN) of the AWS Key Management Service (KMS) key that is used to encrypt environment variables. | `string` | `null` | no |
 | <a name="input_layers"></a> [layers](#input\_layers) | List of Lambda Layer Version ARNs (maximum of 5) to attach to your Lambda Function. | `list(string)` | `[]` | no |
 | <a name="input_logging_config_application_log_level"></a> [logging\_config\_application\_log\_level](#input\_logging\_config\_application\_log\_level) | For JSON structured logs, choose the detail level of the logs your application sends to CloudWatch when using supported logging libraries. | `string` | `null` | no |
@@ -215,7 +214,6 @@ No modules.
 | <a name="output_function_name"></a> [function\_name](#output\_function\_name) | Unique name for your Lambda Function |
 | <a name="output_handler"></a> [handler](#output\_handler) | Function entrypoint in your code. |
 | <a name="output_image_config"></a> [image\_config](#output\_image\_config) | Container image configuration values that override the values in the container image Dockerfile. |
-| <a name="output_image_uri"></a> [image\_uri](#output\_image\_uri) | ECR image URI containing the function's deployment package. |
 | <a name="output_invoke_arn"></a> [invoke\_arn](#output\_invoke\_arn) | ARN to be used for invoking Lambda Function from API Gateway. |
 | <a name="output_kms_key_arn"></a> [kms\_key\_arn](#output\_kms\_key\_arn) | Amazon Resource Name (ARN) of the AWS Key Management Service (KMS) key that is used to encrypt environment variables. |
 | <a name="output_last_modified"></a> [last\_modified](#output\_last\_modified) | Date this resource was last modified. |
