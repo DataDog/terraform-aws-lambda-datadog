@@ -139,17 +139,6 @@ resource "aws_lambda_function" "this" {
   filename      = var.filename
   function_name = var.function_name
   handler       = local.handler
-
-  dynamic "image_config" {
-    for_each = var.image_config_command != null || var.image_config_entry_point != null || var.image_config_working_directory != null ? [true] : []
-
-    content {
-      command           = var.image_config_command
-      entry_point       = var.image_config_entry_point
-      working_directory = var.image_config_working_directory
-    }
-  }
-
   kms_key_arn = var.kms_key_arn
 
   # Datadog layers are defined in single element lists

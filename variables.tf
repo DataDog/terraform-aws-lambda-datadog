@@ -91,24 +91,6 @@ variable "handler" {
   default     = null
 }
 
-variable "image_config_command" {
-  description = "Parameters that you want to pass in with entry_point."
-  type        = list(string)
-  default     = null
-}
-
-variable "image_config_entry_point" {
-  description = "Entry point to your application, which is typically the location of the runtime executable."
-  type        = list(string)
-  default     = null
-}
-
-variable "image_config_working_directory" {
-  description = "Working directory."
-  type        = string
-  default     = null
-}
-
 variable "kms_key_arn" {
   description = "Amazon Resource Name (ARN) of the AWS Key Management Service (KMS) key that is used to encrypt environment variables."
   type        = string

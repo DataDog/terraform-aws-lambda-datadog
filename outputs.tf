@@ -53,11 +53,6 @@ output "handler" {
   value       = aws_lambda_function.this.handler
 }
 
-output "image_config" {
-  description = "Container image configuration values that override the values in the container image Dockerfile."
-  value       = aws_lambda_function.this.image_config
-}
-
 output "invoke_arn" {
   description = "ARN to be used for invoking Lambda Function from API Gateway."
   value       = aws_lambda_function.this.invoke_arn
