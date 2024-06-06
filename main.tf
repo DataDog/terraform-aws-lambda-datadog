@@ -8,6 +8,12 @@ locals {
   }
   runtime_base = regex("[a-z]+", var.runtime)
   runtime_base_environment_variable_map = {
+    dotnet = {
+      AWS_LAMBDA_EXEC_WRAPPER = "/opt/datadog_wrapper"
+    }
+    java = {
+      AWS_LAMBDA_EXEC_WRAPPER = "/opt/datadog_wrapper"
+    }
     nodejs = {
       DD_LAMBDA_HANDLER = var.handler
     }
@@ -16,14 +22,25 @@ locals {
     }
   }
   runtime_base_handler_map = {
+    dotnet = var.handler
+    java   = var.handler
     nodejs = "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler"
     python = "datadog_lambda.handler.handler"
   }
   runtime_base_layer_version_map = {
+    dotnet = var.datadog_dotnet_layer_version
+    java   = var.datadog_java_layer_version
     nodejs = var.datadog_node_layer_version
     python = var.datadog_python_layer_version
   }
   runtime_layer_map = {
+    "dotnet6"    = "dd-trace-dotnet"
+    "dotnet7"    = "dd-trace-dotnet"
+    "dotnet8"    = "dd-trace-dotnet"
+    "java8.al2"  = "dd-trace-java"
+    "java11"     = "dd-trace-java"
+    "java17"     = "dd-trace-java"
+    "java21"     = "dd-trace-java"
     "nodejs16.x" = "Datadog-Node16-x"
     "nodejs18.x" = "Datadog-Node18-x"
     "nodejs20.x" = "Datadog-Node20-x"
@@ -40,7 +57,7 @@ locals {
   datadog_extension_layer_suffix = local.datadog_layer_suffix
 
   datadog_lambda_layer_arn     = "${local.datadog_layer_name_base}:${local.datadog_lambda_layer_runtime}${local.datadog_lambda_layer_suffix}:${local.datadog_lambda_layer_version}"
-  datadog_lambda_layer_suffix  = local.runtime_base == "nodejs" ? "" : local.datadog_layer_suffix # nodejs doesn't have a separate layer for ARM
+  datadog_lambda_layer_suffix  = contains(["java", "nodejs"], local.local.runtime_base) ? "" : local.datadog_layer_suffix # java and nodejs don't have separate layers for ARM
   datadog_lambda_layer_runtime = lookup(local.runtime_layer_map, var.runtime, "")
   datadog_lambda_layer_version = lookup(local.runtime_base_layer_version_map, local.runtime_base, "")
 
@@ -77,6 +94,13 @@ check "runtime_support" {
   assert {
     condition = contains(
       [
+        "dotnet6",
+        "dotnet7",
+        "dotnet8",
+        "java8.al2",
+        "java11",
+        "java17",
+        "java21",
         "nodejs16.x",
         "nodejs18.x",
         "nodejs20.x",

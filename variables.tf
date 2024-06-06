@@ -8,6 +8,18 @@ variable "datadog_extension_layer_version" {
   default     = 58
 }
 
+variable "datadog_dotnet_layer_version" {
+  description = "Version for the Datadog Node Layer"
+  type        = number
+  default     = 15
+}
+
+variable "datadog_java_layer_version" {
+  description = "Version for the Datadog Node Layer"
+  type        = number
+  default     = 14
+}
+
 variable "datadog_node_layer_version" {
   description = "Version for the Datadog Node Layer"
   type        = number
