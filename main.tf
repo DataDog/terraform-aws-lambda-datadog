@@ -45,7 +45,7 @@ locals {
   datadog_lambda_layer_version = lookup(local.runtime_base_layer_version_map, local.runtime_base, "")
  
   # AWS Commercial Partition (aws) account id 464622532012
-  # AWS GovCloud Partitioin (aws-us-gov) account id 002406178527 
+  # AWS GovCloud Partition (aws-us-gov) account id 002406178527 
   datadog_accountid = (data.aws_partition.current.partition == "aws-us-gov") ? "002406178527" : "464622532012" 
   datadog_layer_name_base = "arn:${data.aws_partition.current.partition}:lambda:${data.aws_region.current.name}:${local.datadog_accountid}:layer"
   datadog_layer_suffix    = lookup(local.architecture_layer_suffix_map, var.architectures[0])
