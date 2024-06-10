@@ -64,7 +64,7 @@ module "example_lambda_function" {
 
 ### Lambda Function
 
-All of the arguments available in the [aws_lambda_function](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) resource are available in this Terraform module.
+Arguments available in the [aws_lambda_function](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) resource are available in this Terraform module. Lambda functions created from container images are not supported by this module.
 
 Arguments defined as blocks in the `aws_lambda_function` resource are redefined as variables with their nested arguments.
 
