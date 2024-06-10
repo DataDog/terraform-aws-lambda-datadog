@@ -91,7 +91,7 @@ check "runtime_support" {
 
 check "container_image_support" {
   assert {
-    condition     = var.package_type == "Image"
+    condition     = var.package_type != "Image"
     error_message = "Container images are not supported by the lambda-datadog Terraform module"
   }
 }
