@@ -1,4 +1,5 @@
 data "aws_region" "current" {}
+data "aws_partition" "current" {}
 
 locals {
   architecture_layer_suffix_map = {
@@ -43,7 +44,8 @@ locals {
   datadog_lambda_layer_runtime = lookup(local.runtime_layer_map, var.runtime, "")
   datadog_lambda_layer_version = lookup(local.runtime_base_layer_version_map, local.runtime_base, "")
 
-  datadog_layer_name_base = "arn:aws:lambda:${data.aws_region.current.name}:464622532012:layer"
+  datadog_account_id = (data.aws_partition.current.partition == "aws-us-gov") ? "002406178527" : "464622532012"
+  datadog_layer_name_base = "arn:${data.aws_partition.current.partition}:lambda:${data.aws_region.current.name}:${local.datadog_account_id}:layer"
   datadog_layer_suffix    = lookup(local.architecture_layer_suffix_map, var.architectures[0])
 
   environment_variables = {
