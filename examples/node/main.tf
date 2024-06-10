@@ -48,7 +48,7 @@ data "archive_file" "zip_code" {
   output_path = "${path.module}/build/hello-node.zip"
 }
 
-module "example_lambda_function" {
+module "lambda-datadog" {
   source = "../../"
 
   filename      = "${path.module}/build/hello-node.zip"
@@ -62,6 +62,7 @@ module "example_lambda_function" {
     "DD_API_KEY_SECRET_ARN" : var.datadog_secret_arn
     "DD_ENV" : "dev"
     "DD_SERVICE" : var.datadog_service_name
+    "DD_SITE": var.datadog_site
     "DD_VERSION" : "1.0.0"
   }
 }

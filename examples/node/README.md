@@ -9,6 +9,7 @@ A simple Node Lambda function with out of the box Datadog instrumentation.
 * Create a `terraform.tfvars` file
   - Set the `datadog_secret_arn` to the arn of the secret you just created
   - Set the `datadog_service_name` to the name of the service you want to use to filter for the resource in Datadog
+  - Set the `datadog_site` to the [Datadog destination site](https://docs.datadoghq.com/getting_started/site/) for your metrics, traces, and logs
 * Run the following commands
 
 ```
