@@ -14,20 +14,22 @@ This Terraform module wraps the [aws_lambda_function](https://registry.terraform
 
 ### Python
 ```
-module "example_lambda_function" {
-  source = "Datadog/lambda-datadog/aws"
+module "lambda-datadog" {
+  source  = "DataDog/lambda-datadog/aws"
+  version = "1.0.0"
 
   filename      = "example.zip"
   function_name = "example-function"
   role          = aws_iam_role.lambda_role.arn
   handler       = "app.lambda_handler"
   runtime       = "python3.11"
-  memory_size = 256
+  memory_size   = 256
 
   environment_variables = {
     "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
     "DD_ENV" : "dev"
     "DD_SERVICE" : "example-service"
+    "DD_SITE": "datadoghq.com"
     "DD_VERSION" : "1.0.0"
   }
 
@@ -38,20 +40,22 @@ module "example_lambda_function" {
 
 ### Node
 ```
-module "example_lambda_function" {
-  source = "Datadog/lambda-datadog/aws"
+module "lambda-datadog" {
+  source  = "DataDog/lambda-datadog/aws"
+  version = "1.0.0"
 
   filename      = "example.zip"
   function_name = "example-function"
   role          = aws_iam_role.lambda_role.arn
   handler       = "index.lambda_handler"
   runtime       = "nodejs20.x"
-  memory_size = 256
+  memory_size   = 256
 
   environment_variables = {
     "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
     "DD_ENV" : "dev"
     "DD_SERVICE" : "example-service"
+    "DD_SITE": "datadoghq.com"
     "DD_VERSION" : "1.0.0"
   }
 
