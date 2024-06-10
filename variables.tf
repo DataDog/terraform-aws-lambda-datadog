@@ -5,7 +5,7 @@
 variable "datadog_extension_layer_version" {
   description = "Version for the Datadog Extension Layer"
   type        = number
-  default     = 57
+  default     = 58
 }
 
 variable "datadog_node_layer_version" {
