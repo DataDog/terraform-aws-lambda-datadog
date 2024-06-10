@@ -16,7 +16,7 @@ This Terraform module wraps the [aws_lambda_function](https://registry.terraform
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
-  version = "1.0.0"
+  version = "1.1.0"
 
   filename      = "example.zip"
   function_name = "example-function"
@@ -42,7 +42,7 @@ module "lambda-datadog" {
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
-  version = "1.0.0"
+  version = "1.1.0"
 
   filename      = "example.zip"
   function_name = "example-function"
