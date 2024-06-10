@@ -122,6 +122,10 @@ Use the following variables to select the versions of the Datadog Lambda layers 
 | `datadog_node_layer_version` | Version of the [Datadog Node Lambda layer](https://github.com/DataDog/datadog-lambda-js/releases) to install |
 | `datadog_python_layer_version` | Version of the [Datadog Python Lambda layer](https://github.com/DataDog/datadog-lambda-python/releases) to install |
 
+#### Selecting the Datadog Site
+
+The default Datadog site is `datadoghq.com`. To use a different site set the `DD_SITE` environment variable to the desired destination site. See [Getting Started with Datadog Sites](https://docs.datadoghq.com/getting_started/site/) for the available site values.
+
 #### Configuration
 
 Use Environment variables to configure Datadog Serverless Monitoring. Refer to the documentation below for environment variables available in the Serverless Agent (packaged in the Extension layer) and in the Tracing libraries (packaged in the runtime layers).
