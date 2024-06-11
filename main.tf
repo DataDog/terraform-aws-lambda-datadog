@@ -44,7 +44,7 @@ locals {
   datadog_lambda_layer_runtime = lookup(local.runtime_layer_map, var.runtime, "")
   datadog_lambda_layer_version = lookup(local.runtime_base_layer_version_map, local.runtime_base, "")
 
-  datadog_account_id = (data.aws_partition.current.partition == "aws-us-gov") ? "002406178527" : "464622532012"
+  datadog_account_id      = (data.aws_partition.current.partition == "aws-us-gov") ? "002406178527" : "464622532012"
   datadog_layer_name_base = "arn:${data.aws_partition.current.partition}:lambda:${data.aws_region.current.name}:${local.datadog_account_id}:layer"
   datadog_layer_suffix    = lookup(local.architecture_layer_suffix_map, var.architectures[0])
 
@@ -141,7 +141,7 @@ resource "aws_lambda_function" "this" {
   filename      = var.filename
   function_name = var.function_name
   handler       = local.handler
-  kms_key_arn = var.kms_key_arn
+  kms_key_arn   = var.kms_key_arn
 
   # Datadog layers are defined in single element lists
   # This allows for runtimes where a lambda layer is not needed by concatenating an empty list
@@ -208,4 +208,29 @@ resource "aws_lambda_function" "this" {
       subnet_ids                  = var.vpc_config_subnet_ids
     }
   }
+}
+
+resource "random_uuid" "aws_iam_policy" {}
+
+resource "aws_iam_policy" "secrets_manager_read_policy" {
+  count       = lookup(var.environment_variables, "DD_API_KEY_SECRET_ARN", null) != null ? 1 : 0
+  name        = "lambda-datadog-terraform-secrets-manager-policy-${random_uuid.aws_iam_policy.result}"
+  description = "Policy to allow read access to Datadog API Key in Secrets Manager"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "ReadSecret"
+        Effect   = "Allow"
+        Action   = "secretsmanager:GetSecretValue"
+        Resource = var.environment_variables["DD_API_KEY_SECRET_ARN"]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "attach_secrets_manager_policy" {
+  count      = lookup(var.environment_variables, "DD_API_KEY_SECRET_ARN", null) != null ? 1 : 0
+  role       = split("role/", aws_lambda_function.this.role)[1]
+  policy_arn = aws_iam_policy.secrets_manager_read_policy[0].arn
 }

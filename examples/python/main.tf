@@ -16,30 +16,9 @@ resource "aws_iam_role" "lambda_role" {
   })
 }
 
-resource "aws_iam_policy" "secrets_manager_read_policy" {
-  name        = "terraform-example-python-${var.datadog_service_name}-secrets-manager-policy"
-  description = "Policy to allow read access to Secrets Manager"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid      = "ReadSecret"
-        Effect   = "Allow"
-        Action   = "secretsmanager:GetSecretValue"
-        Resource = var.datadog_secret_arn
-      }
-    ]
-  })
-}
-
 resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_iam_role" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-}
-
-resource "aws_iam_role_policy_attachment" "attach_secrets_manager_policy" {
-  role       = aws_iam_role.lambda_role.name
-  policy_arn = aws_iam_policy.secrets_manager_read_policy.arn
 }
 
 data "archive_file" "zip_code" {
