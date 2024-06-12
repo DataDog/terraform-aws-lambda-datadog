@@ -229,8 +229,13 @@ resource "aws_iam_policy" "secrets_manager_read_policy" {
   })
 }
 
+locals {
+  role_split = split("/", aws_lambda_function.this.role)
+  role_name  = local.role_split[length(local.role_split) - 1]
+}
+
 resource "aws_iam_role_policy_attachment" "attach_secrets_manager_policy" {
   count      = lookup(var.environment_variables, "DD_API_KEY_SECRET_ARN", null) != null ? 1 : 0
-  role       = split("role/", aws_lambda_function.this.role)[1]
+  role       = local.role_name
   policy_arn = aws_iam_policy.secrets_manager_read_policy[0].arn
 }
