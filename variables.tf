@@ -8,6 +8,12 @@ variable "datadog_extension_layer_version" {
   default     = 58
 }
 
+variable "datadog_grant_read_secret_permissions" {
+  description = "Grant read secret permissions to the Lambda Function for the secret storing the Datadog API key in AWS Secrets Manager."
+  type        = bool
+  default     = true
+}
+
 variable "datadog_node_layer_version" {
   description = "Version for the Datadog Node Layer"
   type        = number

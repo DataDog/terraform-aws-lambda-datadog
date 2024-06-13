@@ -209,33 +209,3 @@ resource "aws_lambda_function" "this" {
     }
   }
 }
-
-resource "random_uuid" "aws_iam_policy" {}
-
-resource "aws_iam_policy" "secrets_manager_read_policy" {
-  count       = lookup(var.environment_variables, "DD_API_KEY_SECRET_ARN", null) != null ? 1 : 0
-  name        = "lambda-datadog-terraform-secrets-manager-policy-${random_uuid.aws_iam_policy.result}"
-  description = "Policy to allow read access to Datadog API Key in Secrets Manager"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Sid      = "ReadSecret"
-        Effect   = "Allow"
-        Action   = "secretsmanager:GetSecretValue"
-        Resource = var.environment_variables["DD_API_KEY_SECRET_ARN"]
-      }
-    ]
-  })
-}
-
-locals {
-  role_split = split("/", aws_lambda_function.this.role)
-  role_name  = local.role_split[length(local.role_split) - 1]
-}
-
-resource "aws_iam_role_policy_attachment" "attach_secrets_manager_policy" {
-  count      = lookup(var.environment_variables, "DD_API_KEY_SECRET_ARN", null) != null ? 1 : 0
-  role       = local.role_name
-  policy_arn = aws_iam_policy.secrets_manager_read_policy[0].arn
-}
