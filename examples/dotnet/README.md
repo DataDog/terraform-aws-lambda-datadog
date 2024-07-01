@@ -20,6 +20,8 @@ terraform plan
 terraform apply
 ```
 
+If using `arm64` architecture then build the lambda package with the `-farch arm64` argument.
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
