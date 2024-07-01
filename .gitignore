@@ -37,3 +37,7 @@ terraform.rc
 .terraform.lock.hcl
 
 build
+target
+bin
+obj
+.DS_Store

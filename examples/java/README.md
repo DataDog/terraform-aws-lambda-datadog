@@ -1,6 +1,6 @@
-# Node Example
+# Java Example
 
-A simple Node Lambda function with out of the box Datadog instrumentation.
+A simple Java Lambda function with out of the box Datadog instrumentation.
 
 ## Usage
 
@@ -13,6 +13,7 @@ A simple Node Lambda function with out of the box Datadog instrumentation.
 * Run the following commands
 
 ```
+mvn clean package shade:shade
 terraform init
 terraform plan
 terraform apply

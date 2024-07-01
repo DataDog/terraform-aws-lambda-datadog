@@ -1,6 +1,6 @@
-# Node Example
+# .NET Example
 
-A simple Node Lambda function with out of the box Datadog instrumentation.
+A simple .NET Lambda function with out of the box Datadog instrumentation.
 
 ## Usage
 
@@ -13,10 +13,14 @@ A simple Node Lambda function with out of the box Datadog instrumentation.
 * Run the following commands
 
 ```
+dotnet restore ./src/HelloWorld
+dotnet lambda package --configuration Debug --framework net8.0 --output-package src/HelloWorld/bin/release/net8.0/hello-dotnet.zip --project-location ./src/HelloWorld
 terraform init
 terraform plan
 terraform apply
 ```
+
+If using `arm64` architecture then build the lambda package with the `-farch arm64` argument.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
