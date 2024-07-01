@@ -64,6 +64,58 @@ module "lambda-datadog" {
 }
 ```
 
+### .NET
+```
+module "lambda-datadog" {
+  source  = "DataDog/lambda-datadog/aws"
+  version = "1.1.0"
+
+  filename      = "example.zip"
+  function_name = "example-function"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "HelloWorld::HelloWorld.Function::Handler"
+  runtime       = "dotnet8"
+  memory_size   = 256
+
+  environment_variables = {
+    "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
+    "DD_ENV" : "dev"
+    "DD_SERVICE" : "example-service"
+    "DD_SITE": "datadoghq.com"
+    "DD_VERSION" : "1.0.0"
+  }
+
+  datadog_extension_layer_version = 58
+  datadog_dotnet_layer_version = 15
+}
+```
+
+### Java
+```
+module "lambda-datadog" {
+  source  = "DataDog/lambda-datadog/aws"
+  version = "1.1.0"
+
+  filename      = "example.jar"
+  function_name = "example-function"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "com.serverless.Handler"
+  runtime       = "java21"
+  memory_size   = 1024
+
+  environment_variables = {
+    "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
+    "DD_ENV" : "dev"
+    "DD_SERVICE" : "example-service"
+    "DD_SITE": "datadoghq.com"
+    "DD_VERSION" : "1.0.0"
+  }
+
+  datadog_extension_layer_version = 58
+  datadog_java_layer_version = 14
+}
+```
+
 ## Configuration
 
 ### Lambda Function
@@ -119,6 +171,8 @@ Use the following variables to select the versions of the Datadog Lambda layers 
 | Variable | Description |
 | -------- | ----------- |
 | `datadog_extension_layer_version` | Version of the [Datadog Lambda Extension layer](https://github.com/DataDog/datadog-lambda-extension/releases) to install |
+| `datadog_dotnet_layer_version` | Version of the [Datadog .NET Lambda layer](https://github.com/DataDog/dd-trace-dotnet-aws-lambda-layer/releases) to install |
+| `datadog_java_layer_version` | Version of the [Datadog Java Lambda layer](https://github.com/DataDog/datadog-lambda-java/releases) to install |
 | `datadog_node_layer_version` | Version of the [Datadog Node Lambda layer](https://github.com/DataDog/datadog-lambda-js/releases) to install |
 | `datadog_python_layer_version` | Version of the [Datadog Python Lambda layer](https://github.com/DataDog/datadog-lambda-python/releases) to install |
 
@@ -132,6 +186,8 @@ Use Environment variables to configure Datadog Serverless Monitoring. Refer to t
 
 * [Serverless Agent Configuration](https://docs.datadoghq.com/serverless/guide/agent_configuration/)
 * Tracer Configuration
+  - [.NET](https://docs.datadoghq.com/tracing/trace_collection/library_config/dotnet-framework/?tab=environmentvariables)
+  - [Java](https://docs.datadoghq.com/tracing/trace_collection/library_config/java/)
   - [Node](https://github.com/DataDog/datadog-lambda-js?tab=readme-ov-file#configuration)
   - [Python](https://github.com/DataDog/datadog-lambda-python?tab=readme-ov-file#configuration)
 
