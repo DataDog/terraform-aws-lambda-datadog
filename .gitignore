@@ -38,4 +38,6 @@ terraform.rc
 
 build
 target
+bin
+obj
 .DS_Store
