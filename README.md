@@ -73,7 +73,7 @@ module "lambda-datadog" {
   filename      = "example.zip"
   function_name = "example-function"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "HelloWorld::HelloWorld.Function::Handler"
+  handler       = "Example::Example.Function::Handler"
   runtime       = "dotnet8"
   memory_size   = 256
 
@@ -99,7 +99,7 @@ module "lambda-datadog" {
   filename      = "example.jar"
   function_name = "example-function"
   role          = aws_iam_role.lambda_role.arn
-  handler       = "com.serverless.Handler"
+  handler       = "com.example.Handler"
   runtime       = "java21"
   memory_size   = 1024
 
@@ -136,6 +136,7 @@ resource "aws_lambda_function" "example_lambda_function" {
     variables = {
         "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
         "DD_ENV" : "dev"
+        "DD_SITE": "datadoghq.com"
         "DD_SERVICE" : "example-service"
         "DD_VERSION" : "1.0.0"
     }
@@ -146,8 +147,9 @@ resource "aws_lambda_function" "example_lambda_function" {
 
 #### Datadog Terraform module for AWS Lambda
 ```
-module "example_lambda_function" {
-  source = "Datadog/lambda-datadog/aws"
+module "lambda-datadog" {
+  source  = "DataDog/lambda-datadog/aws"
+  version = "1.1.0"
 
   function_name = "example-function"  
   ...
@@ -155,6 +157,7 @@ module "example_lambda_function" {
   environment_variables = {
     "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
     "DD_ENV" : "dev"
+    "DD_SITE": "datadoghq.com"
     "DD_SERVICE" : "example-service"
     "DD_VERSION" : "1.0.0"
   }

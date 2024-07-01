@@ -38,7 +38,7 @@ terraform apply
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_example_lambda_function"></a> [example\_lambda\_function](#module\_example\_lambda\_function) | ../../ | n/a |
+| <a name="module_lambda-datadog"></a> [lambda-datadog](#module\_lambda-datadog) | ../../ | n/a |
 
 ## Resources
 
@@ -54,8 +54,9 @@ terraform apply
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_secret_arn"></a> [secret\_arn](#input\_secret\_arn) | Secret for Datadog API Key | `string` | n/a | yes |
-| <a name="input_service_name"></a> [service\_name](#input\_service\_name) | Service used to filter for resources in Datadog | `string` | n/a | yes |
+| <a name="input_datadog_secret_arn"></a> [datadog\_secret\_arn](#input\_datadog\_secret\_arn) | Secret for Datadog API Key | `string` | n/a | yes |
+| <a name="input_datadog_service_name"></a> [datadog\_service\_name](#input\_datadog\_service\_name) | Service used to filter for resources in Datadog | `string` | n/a | yes |
+| <a name="input_datadog_site"></a> [datadog\_site](#input\_datadog\_site) | Destination site for your metrics, traces, and logs | `string` | n/a | yes |
 
 ## Outputs
 
