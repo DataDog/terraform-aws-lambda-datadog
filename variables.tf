@@ -9,15 +9,15 @@ variable "datadog_extension_layer_version" {
 }
 
 variable "datadog_dotnet_layer_version" {
-  description = "Version for the Datadog Node Layer"
+  description = "Version for the Datadog .NET Layer"
   type        = number
   default     = 15
 }
 
 variable "datadog_java_layer_version" {
-  description = "Version for the Datadog Node Layer"
+  description = "Version for the Datadog Java Layer"
   type        = number
-  default     = 14
+  default     = 15
 }
 
 variable "datadog_node_layer_version" {
@@ -29,7 +29,7 @@ variable "datadog_node_layer_version" {
 variable "datadog_python_layer_version" {
   description = "Version for the Datadog Python Layer"
   type        = number
-  default     = 95
+  default     = 96
 }
 
 
