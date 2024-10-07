@@ -78,7 +78,7 @@ locals {
     runtime = lookup(local.runtime_base_environment_variable_map, local.runtime_base, {})
   }
 
-  handler = lookup(local.runtime_base_handler_map, local.runtime_base, var.handler)
+  handler = coalesce(var.handler, lookup(local.runtime_base_handler_map, local.runtime_base))
 
   layers = {
     extension = [local.datadog_extension_layer_arn]
