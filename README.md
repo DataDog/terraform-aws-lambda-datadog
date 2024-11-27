@@ -16,7 +16,7 @@ This Terraform module wraps the [aws_lambda_function](https://registry.terraform
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
-  version = "1.5.0"
+  version = "1.6.0"
 
   filename      = "example.zip"
   function_name = "example-function"
@@ -42,7 +42,7 @@ module "lambda-datadog" {
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
-  version = "1.5.0"
+  version = "1.6.0"
 
   filename      = "example.zip"
   function_name = "example-function"
@@ -68,7 +68,7 @@ module "lambda-datadog" {
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
-  version = "1.5.0"
+  version = "1.6.0"
 
   filename      = "example.zip"
   function_name = "example-function"
@@ -94,7 +94,7 @@ module "lambda-datadog" {
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
-  version = "1.5.0"
+  version = "1.6.0"
 
   filename      = "example.jar"
   function_name = "example-function"
@@ -149,7 +149,7 @@ resource "aws_lambda_function" "example_lambda_function" {
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
-  version = "1.5.0"
+  version = "1.6.0"
 
   function_name = "example-function"  
   ...
@@ -199,7 +199,7 @@ Use Environment variables to configure Datadog Serverless Monitoring. Refer to t
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.6.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.32.0 |
 
 ## Providers
