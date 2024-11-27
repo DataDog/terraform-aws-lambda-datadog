@@ -16,7 +16,7 @@ This Terraform module wraps the [aws_lambda_function](https://registry.terraform
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
-  version = "1.5.0"
+  version = "2.0.0"
 
   filename      = "example.zip"
   function_name = "example-function"
@@ -33,8 +33,8 @@ module "lambda-datadog" {
     "DD_VERSION" : "1.0.0"
   }
 
-  datadog_extension_layer_version = 65
-  datadog_python_layer_version = 99
+  datadog_extension_layer_version = 67
+  datadog_python_layer_version = 104
 }
 ```
 
@@ -42,7 +42,7 @@ module "lambda-datadog" {
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
-  version = "1.5.0"
+  version = "2.0.0"
 
   filename      = "example.zip"
   function_name = "example-function"
@@ -59,8 +59,8 @@ module "lambda-datadog" {
     "DD_VERSION" : "1.0.0"
   }
 
-  datadog_extension_layer_version = 65
-  datadog_node_layer_version = 115
+  datadog_extension_layer_version = 67
+  datadog_node_layer_version = 117
 }
 ```
 
@@ -68,7 +68,7 @@ module "lambda-datadog" {
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
-  version = "1.5.0"
+  version = "2.0.0"
 
   filename      = "example.zip"
   function_name = "example-function"
@@ -85,7 +85,7 @@ module "lambda-datadog" {
     "DD_VERSION" : "1.0.0"
   }
 
-  datadog_extension_layer_version = 65
+  datadog_extension_layer_version = 67
   datadog_dotnet_layer_version = 16
 }
 ```
@@ -94,7 +94,7 @@ module "lambda-datadog" {
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
-  version = "1.5.0"
+  version = "2.0.0"
 
   filename      = "example.jar"
   function_name = "example-function"
@@ -111,7 +111,7 @@ module "lambda-datadog" {
     "DD_VERSION" : "1.0.0"
   }
 
-  datadog_extension_layer_version = 65
+  datadog_extension_layer_version = 67
   datadog_java_layer_version = 15
 }
 ```
@@ -149,7 +149,7 @@ resource "aws_lambda_function" "example_lambda_function" {
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
-  version = "1.5.0"
+  version = "2.0.0"
 
   function_name = "example-function"  
   ...
@@ -200,13 +200,13 @@ Use Environment variables to configure Datadog Serverless Monitoring. Refer to t
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.32.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.77.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.32.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.77.0 |
 
 ## Modules
 
@@ -225,11 +225,11 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_architectures"></a> [architectures](#input\_architectures) | Instruction set architecture for your Lambda function. Valid values are ["x86\_64"] and ["arm64"]. | `list(string)` | <pre>["x86_64"]</pre> | no |
 | <a name="input_code_signing_config_arn"></a> [code\_signing\_config\_arn](#input\_code\_signing\_config\_arn) | To enable code signing for this function, specify the ARN of a code-signing configuration. A code-signing configuration includes a set of signing profiles, which define the trusted publishers for this function. | `string` | `null` | no |
-| <a name="input_datadog_extension_layer_version"></a> [datadog\_extension\_layer\_version](#input\_datadog\_extension\_layer\_version) | Version for the Datadog Extension Layer | `number` | `65` | no |
+| <a name="input_datadog_extension_layer_version"></a> [datadog\_extension\_layer\_version](#input\_datadog\_extension\_layer\_version) | Version for the Datadog Extension Layer | `number` | `67` | no |
 | <a name="input_datadog_dotnet_layer_version"></a> [datadog\_dotnet\_layer\_version](#input\_datadog\_dotnet\_layer\_version) | Version for the Datadog .NET Layer | `number` | `16` | no |
 | <a name="input_datadog_java_layer_version"></a> [datadog\_java\_layer\_version](#input\_datadog\_java\_layer\_version) | Version for the Datadog Java Layer | `number` | `15` | no |
-| <a name="input_datadog_node_layer_version"></a> [datadog\_node\_layer\_version](#input\_datadog\_node\_layer\_version) | Version for the Datadog Node Layer | `number` | `115` | no |
-| <a name="input_datadog_python_layer_version"></a> [datadog\_python\_layer\_version](#input\_datadog\_python\_layer\_version) | Version for the Datadog Python Layer | `number` | `99` | no |
+| <a name="input_datadog_node_layer_version"></a> [datadog\_node\_layer\_version](#input\_datadog\_node\_layer\_version) | Version for the Datadog Node Layer | `number` | `117` | no |
+| <a name="input_datadog_python_layer_version"></a> [datadog\_python\_layer\_version](#input\_datadog\_python\_layer\_version) | Version for the Datadog Python Layer | `number` | `104` | no |
 | <a name="input_dead_letter_config_target_arn"></a> [dead\_letter\_config\_target\_arn](#input\_dead\_letter\_config\_target\_arn) | ARN of an SNS topic or SQS queue to notify when an invocation fails. | `string` | `null` | no |
 | <a name="input_description"></a> [description](#input\_description) | Description of what your Lambda Function does. | `string` | `null` | no |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Map of environment variables that are accessible from the function code during execution. | `map(string)` | `{}` | no |
