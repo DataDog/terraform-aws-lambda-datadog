@@ -50,6 +50,7 @@ locals {
     "python3.10" = "Datadog-Python310"
     "python3.11" = "Datadog-Python311"
     "python3.12" = "Datadog-Python312"
+    "python3.13" = "Datadog-Python313"
   }
 }
 
@@ -111,6 +112,7 @@ check "runtime_support" {
         "python3.10",
         "python3.11",
         "python3.12",
+        "python3.13",
       ],
     var.runtime)
     error_message = "${var.runtime} Lambda runtime is not supported by the lambda-datadog Terraform module"
