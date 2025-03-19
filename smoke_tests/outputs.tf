@@ -1,3 +1,19 @@
+output "python_3_13_arn" {
+  description = "Amazon Resource Name (ARN) identifying your Lambda Function."
+  value       = module.lambda-python-3-13.arn
+}
+
+output "python_3_13_invoke_arn" {
+  description = "ARN to be used for invoking Lambda Function from API Gateway."
+  value       = module.lambda-python-3-13.invoke_arn
+}
+
+output "python_3_13_function_name" {
+  description = "Unique name for your Lambda Function"
+  value       = module.lambda-python-3-13.function_name
+}
+
+
 output "python_3_12_arn" {
   description = "Amazon Resource Name (ARN) identifying your Lambda Function."
   value       = module.lambda-python-3-12.arn

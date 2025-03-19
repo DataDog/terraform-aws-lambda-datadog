@@ -55,7 +55,7 @@ module "lambda-datadog" {
   function_name = "terraform-example-python-${var.datadog_service_name}-function"
   role          = aws_iam_role.lambda_role.arn
   handler       = "app.lambda_handler"
-  runtime       = "python3.11"
+  runtime       = "python3.13"
   architectures = ["arm64"]
   memory_size   = 256
 
