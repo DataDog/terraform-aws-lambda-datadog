@@ -41,7 +41,6 @@ locals {
     "java11"     = "dd-trace-java"
     "java17"     = "dd-trace-java"
     "java21"     = "dd-trace-java"
-    "nodejs16.x" = "Datadog-Node16-x"
     "nodejs18.x" = "Datadog-Node18-x"
     "nodejs20.x" = "Datadog-Node20-x"
     "nodejs22.x" = "Datadog-Node22-x"
@@ -88,7 +87,7 @@ locals {
   }
 
   tags = {
-    dd_sls_terraform_module = "2.0.0"
+    dd_sls_terraform_module = "2.1.0"
   }
 }
 
@@ -103,7 +102,6 @@ check "runtime_support" {
         "java11",
         "java17",
         "java21",
-        "nodejs16.x",
         "nodejs18.x",
         "nodejs20.x",
         "nodejs22.x",
