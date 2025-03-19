@@ -69,7 +69,7 @@ module "lambda-python-3-13" {
     "DD_API_KEY_SECRET_ARN" : var.datadog_secret_arn
     "DD_ENV" : "dev"
     "DD_SERVICE" : var.datadog_service_name
-    "DD_SITE": var.datadog_site
+    "DD_SITE" : var.datadog_site
     "DD_VERSION" : "1.0.0"
   }
 }
@@ -89,7 +89,7 @@ module "lambda-python-3-12" {
     "DD_API_KEY_SECRET_ARN" : var.datadog_secret_arn
     "DD_ENV" : "dev"
     "DD_SERVICE" : var.datadog_service_name
-    "DD_SITE": var.datadog_site
+    "DD_SITE" : var.datadog_site
     "DD_VERSION" : "1.0.0"
   }
 }
@@ -109,7 +109,7 @@ module "lambda-python-3-11" {
     "DD_API_KEY_SECRET_ARN" : var.datadog_secret_arn
     "DD_ENV" : "dev"
     "DD_SERVICE" : var.datadog_service_name
-    "DD_SITE": var.datadog_site
+    "DD_SITE" : var.datadog_site
     "DD_VERSION" : "1.0.0"
   }
 }
@@ -129,7 +129,7 @@ module "lambda-python-3-10" {
     "DD_API_KEY_SECRET_ARN" : var.datadog_secret_arn
     "DD_ENV" : "dev"
     "DD_SERVICE" : var.datadog_service_name
-    "DD_SITE": var.datadog_site
+    "DD_SITE" : var.datadog_site
     "DD_VERSION" : "1.0.0"
   }
 }
@@ -149,7 +149,7 @@ module "lambda-python-3-9" {
     "DD_API_KEY_SECRET_ARN" : var.datadog_secret_arn
     "DD_ENV" : "dev"
     "DD_SERVICE" : var.datadog_service_name
-    "DD_SITE": var.datadog_site
+    "DD_SITE" : var.datadog_site
     "DD_VERSION" : "1.0.0"
   }
 }
@@ -169,7 +169,7 @@ module "lambda-python-3-8" {
     "DD_API_KEY_SECRET_ARN" : var.datadog_secret_arn
     "DD_ENV" : "dev"
     "DD_SERVICE" : var.datadog_service_name
-    "DD_SITE": var.datadog_site
+    "DD_SITE" : var.datadog_site
     "DD_VERSION" : "1.0.0"
   }
 }
@@ -188,7 +188,7 @@ module "lambda-node-22" {
     "DD_API_KEY_SECRET_ARN" : var.datadog_secret_arn
     "DD_ENV" : "dev"
     "DD_SERVICE" : var.datadog_service_name
-    "DD_SITE": var.datadog_site
+    "DD_SITE" : var.datadog_site
     "DD_VERSION" : "1.0.0"
   }
 }
@@ -207,7 +207,7 @@ module "lambda-node-20" {
     "DD_API_KEY_SECRET_ARN" : var.datadog_secret_arn
     "DD_ENV" : "dev"
     "DD_SERVICE" : var.datadog_service_name
-    "DD_SITE": var.datadog_site
+    "DD_SITE" : var.datadog_site
     "DD_VERSION" : "1.0.0"
   }
 }
@@ -226,26 +226,7 @@ module "lambda-node-18" {
     "DD_API_KEY_SECRET_ARN" : var.datadog_secret_arn
     "DD_ENV" : "dev"
     "DD_SERVICE" : var.datadog_service_name
-    "DD_SITE": var.datadog_site
-    "DD_VERSION" : "1.0.0"
-  }
-}
-
-module "lambda-node-16" {
-  source = "../"
-
-  filename      = "${path.module}/build/hello-node.zip"
-  function_name = "terraform-smoketest-node-16-${var.datadog_service_name}-function"
-  role          = aws_iam_role.lambda_role.arn
-  handler       = "index.lambda_handler"
-  runtime       = "nodejs16.x"
-  memory_size   = 256
-
-  environment_variables = {
-    "DD_API_KEY_SECRET_ARN" : var.datadog_secret_arn
-    "DD_ENV" : "dev"
-    "DD_SERVICE" : var.datadog_service_name
-    "DD_SITE": var.datadog_site
+    "DD_SITE" : var.datadog_site
     "DD_VERSION" : "1.0.0"
   }
 }

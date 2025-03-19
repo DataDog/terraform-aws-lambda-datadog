@@ -140,19 +140,3 @@ output "node_18_function_name" {
   description = "Unique name for your Lambda Function"
   value       = module.lambda-node-18.function_name
 }
-
-
-output "node_16_arn" {
-  description = "Amazon Resource Name (ARN) identifying your Lambda Function."
-  value       = module.lambda-node-16.arn
-}
-
-output "node_16_invoke_arn" {
-  description = "ARN to be used for invoking Lambda Function from API Gateway."
-  value       = module.lambda-node-16.invoke_arn
-}
-
-output "node_16_function_name" {
-  description = "Unique name for your Lambda Function"
-  value       = module.lambda-node-16.function_name
-}
