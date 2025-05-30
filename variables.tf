@@ -32,6 +32,12 @@ variable "datadog_python_layer_version" {
   default     = 106
 }
 
+variable "datadog_enable_fips" {
+  description = "Enable FIPS compliant extension layers"
+  type        = bool
+  default     = false
+}
+
 
 ###################
 # Lambda Function
