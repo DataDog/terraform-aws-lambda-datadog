@@ -120,11 +120,18 @@ module "lambda-datadog" {
 
 ### Lambda Function
 
-Arguments available in the [aws_lambda_function](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) resource are available in this Terraform module. Lambda functions created from container images are not supported by this module.
+- Arguments available in the [aws_lambda_function](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) resource are available in this Terraform module. Lambda functions created from container images are not supported by this module.
+- To prevent Terraform from re-creating the resource, add a `moved` block as shown below:
 
-Arguments defined as blocks in the `aws_lambda_function` resource are redefined as variables with their nested arguments.
+```tf
+   moved {
+    from = aws_lambda_function.{your_lambda_function}
+    to   = module.{your_lambda_function}.aws_lambda_function.this
+   }
+```
 
-For example, in `aws_lambda_function`, `environment` is defined as a block with a `variables` argument. In this Terraform module, the value for the `environment_variables` is passed to the `environment.variables` argument in `aws_lambda_function`. See [variables.tf](variables.tf) for a complete list of variables in this module.
+- Arguments defined as blocks in the `aws_lambda_function` resource are redefined as variables with their nested arguments.
+  * For example, in `aws_lambda_function`, `environment` is defined as a block with a `variables` argument. In this Terraform module, the value for the `environment_variables` is passed to the `environment.variables` argument in `aws_lambda_function`. See [variables.tf](variables.tf) for a complete list of variables in this module.
 
 #### aws_lambda_function resource
 ```
