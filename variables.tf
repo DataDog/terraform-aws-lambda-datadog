@@ -32,7 +32,7 @@ variable "datadog_python_layer_version" {
   default     = 106
 }
 
-variable "datadog_enable_fips" {
+variable "datadog_is_fips_enabled" {
   description = "Enable FIPS compliant extension layers"
   type        = bool
   default     = false

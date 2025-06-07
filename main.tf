@@ -6,7 +6,7 @@ locals {
     x86_64 = "",
     arm64  = "-ARM"
   }
-  fips_suffix = var.datadog_enable_fips ? "-FIPS" : ""
+  fips_suffix = var.datadog_is_fips_enabled ? "-FIPS" : ""
   runtime_base = regex("[a-z]+", var.runtime)
   runtime_base_environment_variable_map = {
     dotnet = {
