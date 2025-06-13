@@ -111,6 +111,7 @@ check "runtime_support" {
         "python3.11",
         "python3.12",
         "python3.13",
+        "provided.al2",
         "provided.al2023",
       ],
     var.runtime)
