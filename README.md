@@ -116,6 +116,32 @@ module "lambda-datadog" {
 }
 ```
 
+### Go
+```
+module "lambda-datadog" {
+  source  = "DataDog/lambda-datadog/aws"
+  version = "3.0.0"
+
+  filename      = "example.zip"
+  function_name = "example-function"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "bootstrap"
+  runtime       = "provided.al2023"
+  memory_size   = 1024
+
+  environment_variables = {
+    "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
+    "DD_ENV" : "dev"
+    "DD_SERVICE" : "example-service"
+    "DD_SITE": "datadoghq.com"
+    "DD_VERSION" : "1.0.0"
+  }
+
+  datadog_extension_layer_version = 74
+}
+```
+
+
 ## Configuration
 
 ### Lambda Function
