@@ -127,7 +127,7 @@ module "lambda-datadog" {
   role          = aws_iam_role.lambda_role.arn
   handler       = "bootstrap"
   runtime       = "provided.al2023"
-  memory_size   = 1024
+  memory_size   = 256
 
   environment_variables = {
     "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
