@@ -87,7 +87,7 @@ locals {
   }
 
   tags = {
-    dd_sls_terraform_module = "3.0.0"
+    dd_sls_terraform_module = "3.1.0"
   }
 }
 
