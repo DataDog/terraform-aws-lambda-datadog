@@ -6,7 +6,7 @@ locals {
     x86_64 = "",
     arm64  = "-ARM"
   }
-  fips_suffix = var.datadog_is_fips_enabled ? "-FIPS" : ""
+  fips_suffix = local.is_fips_enabled ? "-FIPS" : ""
   runtime_base = regex("[a-z]+", var.runtime)
   runtime_base_environment_variable_map = {
     dotnet = {
@@ -52,6 +52,11 @@ locals {
     "python3.12" = "Datadog-Python312"
     "python3.13" = "Datadog-Python313"
   }
+  is_fips_enabled = (
+    var.datadog_is_fips_enabled != null
+    ? var.datadog_is_fips_enabled
+    : (lookup(var.environment_variables, "DD_SITE", "") == "ddog-gov.com")
+  )
 }
 
 locals {
