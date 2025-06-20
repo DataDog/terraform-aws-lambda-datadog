@@ -32,6 +32,12 @@ variable "datadog_python_layer_version" {
   default     = 110
 }
 
+variable "fips" {
+  description = "Enable FIPS mode for Datadog Lambda extension"
+  type        = bool
+  default     = false
+}
+
 
 ###################
 # Lambda Function
