@@ -32,6 +32,12 @@ variable "datadog_python_layer_version" {
   default     = 110
 }
 
+variable "datadog_is_fips_enabled" {
+  description = "When set to true, a FIPS-compliant Lambda extension layer is used. Defaults to `true` if the DD_SITE environment variable is ddog-gov.com. Otherwise, defaults to `false`."
+  type        = bool
+  default     = null
+}
+
 
 ###################
 # Lambda Function

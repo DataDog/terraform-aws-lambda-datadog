@@ -6,6 +6,7 @@ locals {
     x86_64 = "",
     arm64  = "-ARM"
   }
+  fips_suffix = local.is_fips_enabled ? "-FIPS" : ""
   runtime_base = regex("[a-z]+", var.runtime)
   runtime_base_environment_variable_map = {
     dotnet = {
@@ -51,11 +52,16 @@ locals {
     "python3.12" = "Datadog-Python312"
     "python3.13" = "Datadog-Python313"
   }
+  is_fips_enabled = (
+    var.datadog_is_fips_enabled != null
+    ? var.datadog_is_fips_enabled
+    : (lookup(var.environment_variables, "DD_SITE", "") == "ddog-gov.com")
+  )
 }
 
 locals {
   datadog_extension_layer_arn    = "${local.datadog_layer_name_base}:Datadog-Extension${local.datadog_extension_layer_suffix}:${var.datadog_extension_layer_version}"
-  datadog_extension_layer_suffix = local.datadog_layer_suffix
+  datadog_extension_layer_suffix = "${local.datadog_layer_suffix}${local.fips_suffix}"
 
   datadog_lambda_layer_arn     = "${local.datadog_layer_name_base}:${local.datadog_lambda_layer_runtime}${local.datadog_lambda_layer_suffix}:${local.datadog_lambda_layer_version}"
   datadog_lambda_layer_suffix  = contains(["java", "nodejs"], local.runtime_base) ? "" : local.datadog_layer_suffix # java and nodejs don't have separate layers for ARM
