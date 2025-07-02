@@ -174,9 +174,9 @@ resource "aws_lambda_function" "this" {
   # Datadog layers are defined in single element lists
   # This allows for runtimes where a lambda layer is not needed by concatenating an empty list
   layers = concat(
-    local.layers.extension,
     local.layers.lambda,
-    var.layers
+    var.layers,
+    local.layers.extension,
   )
 
   dynamic "logging_config" {
