@@ -254,48 +254,49 @@ No modules.
 
 ## Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| Name | Description | Type           | Default | Required |
+|------|-------------|----------------|---------|:--------:|
 | <a name="input_architectures"></a> [architectures](#input\_architectures) | Instruction set architecture for your Lambda function. Valid values are ["x86\_64"] and ["arm64"]. | `list(string)` | <pre>["x86_64"]</pre> | no |
-| <a name="input_code_signing_config_arn"></a> [code\_signing\_config\_arn](#input\_code\_signing\_config\_arn) | To enable code signing for this function, specify the ARN of a code-signing configuration. A code-signing configuration includes a set of signing profiles, which define the trusted publishers for this function. | `string` | `null` | no |
-| <a name="input_datadog_extension_layer_version"></a> [datadog\_extension\_layer\_version](#input\_datadog\_extension\_layer\_version) | Version for the Datadog Extension Layer | `number` | `74` | no |
-| <a name="input_datadog_dotnet_layer_version"></a> [datadog\_dotnet\_layer\_version](#input\_datadog\_dotnet\_layer\_version) | Version for the Datadog .NET Layer | `number` | `19` | no |
-| <a name="input_datadog_java_layer_version"></a> [datadog\_java\_layer\_version](#input\_datadog\_java\_layer\_version) | Version for the Datadog Java Layer | `number` | `19` | no |
-| <a name="input_datadog_node_layer_version"></a> [datadog\_node\_layer\_version](#input\_datadog\_node\_layer\_version) | Version for the Datadog Node Layer | `number` | `123` | no |
-| <a name="input_datadog_python_layer_version"></a> [datadog\_python\_layer\_version](#input\_datadog\_python\_layer\_version) | Version for the Datadog Python Layer | `number` | `106` | no |
-| <a name="input_dead_letter_config_target_arn"></a> [dead\_letter\_config\_target\_arn](#input\_dead\_letter\_config\_target\_arn) | ARN of an SNS topic or SQS queue to notify when an invocation fails. | `string` | `null` | no |
-| <a name="input_description"></a> [description](#input\_description) | Description of what your Lambda Function does. | `string` | `null` | no |
-| <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Map of environment variables that are accessible from the function code during execution. | `map(string)` | `{}` | no |
-| <a name="input_ephemeral_storage_size"></a> [ephemeral\_storage\_size](#input\_ephemeral\_storage\_size) | The amount of Ephemeral storage(/tmp) to allocate for the Lambda Function in MB. | `number` | `null` | no |
-| <a name="input_file_system_config_arn"></a> [file\_system\_config\_arn](#input\_file\_system\_config\_arn) | Amazon Resource Name (ARN) of the Amazon EFS Access Point that provides access to the file system. | `string` | `null` | no |
-| <a name="input_file_system_config_local_mount_path"></a> [file\_system\_config\_local\_mount\_path](#input\_file\_system\_config\_local\_mount\_path) | Path where the function can access the file system, starting with /mnt/. | `string` | `null` | no |
-| <a name="input_filename"></a> [filename](#input\_filename) | Path to the function's deployment package within the local filesystem. | `string` | `null` | no |
-| <a name="input_function_name"></a> [function\_name](#input\_function\_name) | Unique name for your Lambda Function. | `string` | `null` | no |
-| <a name="input_handler"></a> [handler](#input\_handler) | Function entrypoint in your code. | `string` | `null` | no |
-| <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | Amazon Resource Name (ARN) of the AWS Key Management Service (KMS) key that is used to encrypt environment variables. | `string` | `null` | no |
+| <a name="input_code_signing_config_arn"></a> [code\_signing\_config\_arn](#input\_code\_signing\_config\_arn) | To enable code signing for this function, specify the ARN of a code-signing configuration. A code-signing configuration includes a set of signing profiles, which define the trusted publishers for this function. | `string`       | `null` | no |
+| <a name="input_datadog_extension_layer_version"></a> [datadog\_extension\_layer\_version](#input\_datadog\_extension\_layer\_version) | Version for the Datadog Extension Layer | `number`       | `74` | no |
+| <a name="input_datadog_dotnet_layer_version"></a> [datadog\_dotnet\_layer\_version](#input\_datadog\_dotnet\_layer\_version) | Version for the Datadog .NET Layer | `number`       | `19` | no |
+| <a name="input_datadog_java_layer_version"></a> [datadog\_java\_layer\_version](#input\_datadog\_java\_layer\_version) | Version for the Datadog Java Layer | `number`       | `19` | no |
+| <a name="input_datadog_node_layer_version"></a> [datadog\_node\_layer\_version](#input\_datadog\_node\_layer\_version) | Version for the Datadog Node Layer | `number`       | `123` | no |
+| <a name="input_datadog_python_layer_version"></a> [datadog\_python\_layer\_version](#input\_datadog\_python\_layer\_version) | Version for the Datadog Python Layer | `number`       | `106` | no |
+| <a name="input_dead_letter_config_target_arn"></a> [dead\_letter\_config\_target\_arn](#input\_dead\_letter\_config\_target\_arn) | ARN of an SNS topic or SQS queue to notify when an invocation fails. | `string`       | `null` | no |
+| <a name="input_description"></a> [description](#input\_description) | Description of what your Lambda Function does. | `string`       | `null` | no |
+| <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Map of environment variables that are accessible from the function code during execution. | `map(string)`  | `{}` | no |
+| <a name="input_ephemeral_storage_size"></a> [ephemeral\_storage\_size](#input\_ephemeral\_storage\_size) | The amount of Ephemeral storage(/tmp) to allocate for the Lambda Function in MB. | `number`       | `null` | no |
+| <a name="input_file_system_config_arn"></a> [file\_system\_config\_arn](#input\_file\_system\_config\_arn) | Amazon Resource Name (ARN) of the Amazon EFS Access Point that provides access to the file system. | `string`       | `null` | no |
+| <a name="input_file_system_config_local_mount_path"></a> [file\_system\_config\_local\_mount\_path](#input\_file\_system\_config\_local\_mount\_path) | Path where the function can access the file system, starting with /mnt/. | `string`       | `null` | no |
+| <a name="input_filename"></a> [filename](#input\_filename) | Path to the function's deployment package within the local filesystem. | `string`       | `null` | no |
+| <a name="input_fips"></a> [filename](#input_fips) | Enable FIPS mode. | `bool`         | `null` | no |
+| <a name="input_function_name"></a> [function\_name](#input\_function\_name) | Unique name for your Lambda Function. | `string`       | `null` | no |
+| <a name="input_handler"></a> [handler](#input\_handler) | Function entrypoint in your code. | `string`       | `null` | no |
+| <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | Amazon Resource Name (ARN) of the AWS Key Management Service (KMS) key that is used to encrypt environment variables. | `string`       | `null` | no |
 | <a name="input_layers"></a> [layers](#input\_layers) | List of Lambda Layer Version ARNs (maximum of 5) to attach to your Lambda Function. | `list(string)` | `[]` | no |
-| <a name="input_logging_config_application_log_level"></a> [logging\_config\_application\_log\_level](#input\_logging\_config\_application\_log\_level) | For JSON structured logs, choose the detail level of the logs your application sends to CloudWatch when using supported logging libraries. | `string` | `null` | no |
-| <a name="input_logging_config_log_format"></a> [logging\_config\_log\_format](#input\_logging\_config\_log\_format) | Select between Text and structured JSON format for your function's logs. | `string` | `null` | no |
-| <a name="input_logging_config_log_group"></a> [logging\_config\_log\_group](#input\_logging\_config\_log\_group) | The CloudWatch log group your function sends logs to. | `string` | `null` | no |
-| <a name="input_logging_config_system_log_level"></a> [logging\_config\_system\_log\_level](#input\_logging\_config\_system\_log\_level) | For JSON structured logs, choose the detail level of the Lambda platform event logs sent to CloudWatch, such as ERROR, DEBUG, or INFO. | `string` | `null` | no |
-| <a name="input_memory_size"></a> [memory\_size](#input\_memory\_size) | Amount of memory in MB your Lambda Function can use at runtime. | `number` | `null` | no |
-| <a name="input_package_type"></a> [package\_type](#input\_package\_type) | Lambda deployment package type. | `string` | `null` | no |
-| <a name="input_publish"></a> [publish](#input\_publish) | Whether to publish creation/change as new Lambda Function Version. | `bool` | `null` | no |
-| <a name="input_reserved_concurrent_executions"></a> [reserved\_concurrent\_executions](#input\_reserved\_concurrent\_executions) | Amount of reserved concurrent executions for this lambda function. | `number` | `null` | no |
-| <a name="input_role"></a> [role](#input\_role) | Amazon Resource Name (ARN) of the function's execution role. The role provides the function's identity and access to AWS services and resources. | `string` | `null` | no |
-| <a name="input_runtime"></a> [runtime](#input\_runtime) | Identifier of the function's runtime. | `string` | `null` | no |
-| <a name="input_s3_bucket"></a> [s3\_bucket](#input\_s3\_bucket) | S3 bucket location containing the function's deployment package. | `string` | `null` | no |
-| <a name="input_s3_key"></a> [s3\_key](#input\_s3\_key) | S3 key of an object containing the function's deployment package. | `string` | `null` | no |
-| <a name="input_s3_object_version"></a> [s3\_object\_version](#input\_s3\_object\_version) | Object version containing the function's deployment package. | `string` | `null` | no |
-| <a name="input_skip_destroy"></a> [skip\_destroy](#input\_skip\_destroy) | Set to true if you do not wish the function to be deleted at destroy time, and instead just remove the function from the Terraform state. | `bool` | `null` | no |
-| <a name="input_snap_start_apply_on"></a> [snap\_start\_apply\_on](#input\_snap\_start\_apply\_on) | Conditions where snap start is enabled. | `string` | `null` | no |
-| <a name="input_source_code_hash"></a> [source\_code\_hash](#input\_source\_code\_hash) | Used to trigger updates. Must be set to a base64-encoded SHA256 hash of the package file specified with either filename or s3\_key. | `string` | `null` | no |
-| <a name="input_tags"></a> [tags](#input\_tags) | Map of tags to assign to the object. | `map(string)` | `null` | no |
-| <a name="input_timeout"></a> [timeout](#input\_timeout) | Amount of time your Lambda Function has to run in seconds. | `number` | `null` | no |
-| <a name="input_tracing_config_mode"></a> [tracing\_config\_mode](#input\_tracing\_config\_mode) | Whether to sample and trace a subset of incoming requests with AWS X-Ray. | `string` | `null` | no |
-| <a name="input_vpc_config_ipv6_allowed_for_dual_stack"></a> [vpc\_config\_ipv6\_allowed\_for\_dual\_stack](#input\_vpc\_config\_ipv6\_allowed\_for\_dual\_stack) | Allows outbound IPv6 traffic on VPC functions that are connected to dual-stack subnets. | `bool` | `null` | no |
-| <a name="input_vpc_config_security_group_ids"></a> [vpc\_config\_security\_group\_ids](#input\_vpc\_config\_security\_group\_ids) | List of security group IDs associated with the Lambda function. | `set(string)` | `null` | no |
-| <a name="input_vpc_config_subnet_ids"></a> [vpc\_config\_subnet\_ids](#input\_vpc\_config\_subnet\_ids) | List of subnet IDs associated with the Lambda function. | `set(string)` | `null` | no |
+| <a name="input_logging_config_application_log_level"></a> [logging\_config\_application\_log\_level](#input\_logging\_config\_application\_log\_level) | For JSON structured logs, choose the detail level of the logs your application sends to CloudWatch when using supported logging libraries. | `string`       | `null` | no |
+| <a name="input_logging_config_log_format"></a> [logging\_config\_log\_format](#input\_logging\_config\_log\_format) | Select between Text and structured JSON format for your function's logs. | `string`       | `null` | no |
+| <a name="input_logging_config_log_group"></a> [logging\_config\_log\_group](#input\_logging\_config\_log\_group) | The CloudWatch log group your function sends logs to. | `string`       | `null` | no |
+| <a name="input_logging_config_system_log_level"></a> [logging\_config\_system\_log\_level](#input\_logging\_config\_system\_log\_level) | For JSON structured logs, choose the detail level of the Lambda platform event logs sent to CloudWatch, such as ERROR, DEBUG, or INFO. | `string`       | `null` | no |
+| <a name="input_memory_size"></a> [memory\_size](#input\_memory\_size) | Amount of memory in MB your Lambda Function can use at runtime. | `number`       | `null` | no |
+| <a name="input_package_type"></a> [package\_type](#input\_package\_type) | Lambda deployment package type. | `string`       | `null` | no |
+| <a name="input_publish"></a> [publish](#input\_publish) | Whether to publish creation/change as new Lambda Function Version. | `bool`         | `null` | no |
+| <a name="input_reserved_concurrent_executions"></a> [reserved\_concurrent\_executions](#input\_reserved\_concurrent\_executions) | Amount of reserved concurrent executions for this lambda function. | `number`       | `null` | no |
+| <a name="input_role"></a> [role](#input\_role) | Amazon Resource Name (ARN) of the function's execution role. The role provides the function's identity and access to AWS services and resources. | `string`       | `null` | no |
+| <a name="input_runtime"></a> [runtime](#input\_runtime) | Identifier of the function's runtime. | `string`       | `null` | no |
+| <a name="input_s3_bucket"></a> [s3\_bucket](#input\_s3\_bucket) | S3 bucket location containing the function's deployment package. | `string`       | `null` | no |
+| <a name="input_s3_key"></a> [s3\_key](#input\_s3\_key) | S3 key of an object containing the function's deployment package. | `string`       | `null` | no |
+| <a name="input_s3_object_version"></a> [s3\_object\_version](#input\_s3\_object\_version) | Object version containing the function's deployment package. | `string`       | `null` | no |
+| <a name="input_skip_destroy"></a> [skip\_destroy](#input\_skip\_destroy) | Set to true if you do not wish the function to be deleted at destroy time, and instead just remove the function from the Terraform state. | `bool`         | `null` | no |
+| <a name="input_snap_start_apply_on"></a> [snap\_start\_apply\_on](#input\_snap\_start\_apply\_on) | Conditions where snap start is enabled. | `string`       | `null` | no |
+| <a name="input_source_code_hash"></a> [source\_code\_hash](#input\_source\_code\_hash) | Used to trigger updates. Must be set to a base64-encoded SHA256 hash of the package file specified with either filename or s3\_key. | `string`       | `null` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Map of tags to assign to the object. | `map(string)`  | `null` | no |
+| <a name="input_timeout"></a> [timeout](#input\_timeout) | Amount of time your Lambda Function has to run in seconds. | `number`       | `null` | no |
+| <a name="input_tracing_config_mode"></a> [tracing\_config\_mode](#input\_tracing\_config\_mode) | Whether to sample and trace a subset of incoming requests with AWS X-Ray. | `string`       | `null` | no |
+| <a name="input_vpc_config_ipv6_allowed_for_dual_stack"></a> [vpc\_config\_ipv6\_allowed\_for\_dual\_stack](#input\_vpc\_config\_ipv6\_allowed\_for\_dual\_stack) | Allows outbound IPv6 traffic on VPC functions that are connected to dual-stack subnets. | `bool`         | `null` | no |
+| <a name="input_vpc_config_security_group_ids"></a> [vpc\_config\_security\_group\_ids](#input\_vpc\_config\_security\_group\_ids) | List of security group IDs associated with the Lambda function. | `set(string)`  | `null` | no |
+| <a name="input_vpc_config_subnet_ids"></a> [vpc\_config\_subnet\_ids](#input\_vpc\_config\_subnet\_ids) | List of subnet IDs associated with the Lambda function. | `set(string)`  | `null` | no |
 
 ## Outputs
 
