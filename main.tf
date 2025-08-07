@@ -145,7 +145,7 @@ resource "aws_lambda_function" "this" {
   # User defined environment variables take precedence over datadog defined environment variables
   # This allows users the option to override default behavior
   environment {
-    variables = merge(
+    variables = var.disable_instrumentation ? var.environment_variables : merge(
       local.environment_variables.common,
       local.environment_variables.runtime,
       var.environment_variables
@@ -171,12 +171,12 @@ resource "aws_lambda_function" "this" {
 
   filename      = var.filename
   function_name = var.function_name
-  handler       = local.handler
+  handler       = var.disable_instrumentation ? var.handler : local.handler
   kms_key_arn   = var.kms_key_arn
 
   # Datadog layers are defined in single element lists
   # This allows for runtimes where a lambda layer is not needed by concatenating an empty list
-  layers = concat(
+  layers = var.disable_instrumentation ? var.layers : concat(
     var.layers,
     local.layers.lambda,
     local.layers.extension,
@@ -215,7 +215,7 @@ resource "aws_lambda_function" "this" {
 
   # Datadog defined tags take precedence over user defined tags
   # This is to ensure that the dd_sls_terraform_module tag is set correctly
-  tags = merge(
+  tags = var.disable_instrumentation ? var.tags : merge(
     var.tags,
     local.tags
   )
