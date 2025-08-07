@@ -2,6 +2,12 @@
 # Datadog
 ###########
 
+variable "disable_instrumentation" {
+  description = "If true, will disable the instrumentation completely, and deploy the lambda as is"
+  type        = bool
+  default     = false
+}
+
 variable "datadog_extension_layer_version" {
   description = "Version for the Datadog Extension Layer"
   type        = number
