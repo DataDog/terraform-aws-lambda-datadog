@@ -22,7 +22,7 @@ module "lambda-datadog" {
   function_name = "example-function"
   role          = aws_iam_role.lambda_role.arn
   handler       = "app.lambda_handler"
-  runtime       = "python3.13"
+  runtime       = "python3.14"
   memory_size   = 256
 
   environment_variables = {
