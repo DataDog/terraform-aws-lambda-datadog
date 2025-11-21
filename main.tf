@@ -50,6 +50,7 @@ locals {
     "python3.11" = "Datadog-Python311"
     "python3.12" = "Datadog-Python312"
     "python3.13" = "Datadog-Python313"
+    "python3.14" = "Datadog-Python314"
   }
 }
 
@@ -114,6 +115,7 @@ check "runtime_support" {
         "python3.11",
         "python3.12",
         "python3.13",
+        "python3.14",
         "provided.al2",
         "provided.al2023",
       ],
