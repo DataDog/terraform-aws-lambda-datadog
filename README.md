@@ -1,14 +1,14 @@
-# Datadog Terraform module for AWS Lambda
+# DataDog Terraform module for AWS Lambda
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](https://github.com/DataDog/terraform-aws-lambda-datadog/blob/main/LICENSE)
 
-Use this Terraform module to install Datadog Serverless Monitoring for AWS Lambda.
+Use this Terraform module to install DataDog Serverless Monitoring for AWS Lambda.
 
-This Terraform module wraps the [aws_lambda_function](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) resource and automatically configures your Lambda function for Datadog Serverless Monitoring by:
+This Terraform module wraps the [aws_lambda_function](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) resource and automatically configures your Lambda function for DataDog Serverless Monitoring by:
 
-* Adding the Datadog Lambda layers
+* Adding the DataDog Lambda layers
 * Redirecting the Lambda handler
-* Enabling the collection of metrics, traces, and logs to Datadog
+* Enabling the collection of metrics, traces, and logs to DataDog
 
 ## Usage
 
@@ -178,7 +178,7 @@ resource "aws_lambda_function" "example_lambda_function" {
 }
 ```
 
-#### Datadog Terraform module for AWS Lambda
+#### DataDog Terraform module for AWS Lambda
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
@@ -198,27 +198,27 @@ module "lambda-datadog" {
 }
 ```
 
-### Datadog
+### DataDog
 
 #### Selecting the layer versions
 
-Use the following variables to select the versions of the Datadog Lambda layers to use. If no layer version is specified the latest version will be used.
+Use the following variables to select the versions of the DataDog Lambda layers to use. If no layer version is specified the latest version will be used.
 
 | Variable | Description |
 | -------- | ----------- |
-| `datadog_extension_layer_version` | Version of the [Datadog Lambda Extension layer](https://github.com/DataDog/datadog-lambda-extension/releases) to install |
-| `datadog_dotnet_layer_version` | Version of the [Datadog .NET Lambda layer](https://github.com/DataDog/dd-trace-dotnet-aws-lambda-layer/releases) to install |
-| `datadog_java_layer_version` | Version of the [Datadog Java Lambda layer](https://github.com/DataDog/datadog-lambda-java/releases) to install |
-| `datadog_node_layer_version` | Version of the [Datadog Node Lambda layer](https://github.com/DataDog/datadog-lambda-js/releases) to install |
-| `datadog_python_layer_version` | Version of the [Datadog Python Lambda layer](https://github.com/DataDog/datadog-lambda-python/releases) to install |
+| `datadog_extension_layer_version` | Version of the [DataDog Lambda Extension layer](https://github.com/DataDog/datadog-lambda-extension/releases) to install |
+| `datadog_dotnet_layer_version` | Version of the [DataDog .NET Lambda layer](https://github.com/DataDog/dd-trace-dotnet-aws-lambda-layer/releases) to install |
+| `datadog_java_layer_version` | Version of the [DataDog Java Lambda layer](https://github.com/DataDog/datadog-lambda-java/releases) to install |
+| `datadog_node_layer_version` | Version of the [DataDog Node Lambda layer](https://github.com/DataDog/datadog-lambda-js/releases) to install |
+| `datadog_python_layer_version` | Version of the [DataDog Python Lambda layer](https://github.com/DataDog/datadog-lambda-python/releases) to install |
 
-#### Selecting the Datadog Site
+#### Selecting the DataDog Site
 
-The default Datadog site is `datadoghq.com`. To use a different site set the `DD_SITE` environment variable to the desired destination site. See [Getting Started with Datadog Sites](https://docs.datadoghq.com/getting_started/site/) for the available site values.
+The default DataDog site is `datadoghq.com`. To use a different site set the `DD_SITE` environment variable to the desired destination site. See [Getting Started with DataDog Sites](https://docs.datadoghq.com/getting_started/site/) for the available site values.
 
 #### Configuration
 
-Use Environment variables to configure Datadog Serverless Monitoring. Refer to the documentation below for environment variables available in the Serverless Agent (packaged in the Extension layer) and in the Tracing libraries (packaged in the runtime layers).
+Use Environment variables to configure DataDog Serverless Monitoring. Refer to the documentation below for environment variables available in the Serverless Agent (packaged in the Extension layer) and in the Tracing libraries (packaged in the runtime layers).
 
 * [Serverless Agent Configuration](https://docs.datadoghq.com/serverless/guide/agent_configuration/)
 * Tracer Configuration
@@ -258,11 +258,11 @@ No modules.
 |------|-------------|----------------|---------|:--------:|
 | <a name="input_architectures"></a> [architectures](#input\_architectures) | Instruction set architecture for your Lambda function. Valid values are ["x86\_64"] and ["arm64"]. | `list(string)` | <pre>["x86_64"]</pre> | no |
 | <a name="input_code_signing_config_arn"></a> [code\_signing\_config\_arn](#input\_code\_signing\_config\_arn) | To enable code signing for this function, specify the ARN of a code-signing configuration. A code-signing configuration includes a set of signing profiles, which define the trusted publishers for this function. | `string`       | `null` | no |
-| <a name="input_datadog_extension_layer_version"></a> [datadog\_extension\_layer\_version](#input\_datadog\_extension\_layer\_version) | Version for the Datadog Extension Layer | `number`       | `74` | no |
-| <a name="input_datadog_dotnet_layer_version"></a> [datadog\_dotnet\_layer\_version](#input\_datadog\_dotnet\_layer\_version) | Version for the Datadog .NET Layer | `number`       | `19` | no |
-| <a name="input_datadog_java_layer_version"></a> [datadog\_java\_layer\_version](#input\_datadog\_java\_layer\_version) | Version for the Datadog Java Layer | `number`       | `19` | no |
-| <a name="input_datadog_node_layer_version"></a> [datadog\_node\_layer\_version](#input\_datadog\_node\_layer\_version) | Version for the Datadog Node Layer | `number`       | `123` | no |
-| <a name="input_datadog_python_layer_version"></a> [datadog\_python\_layer\_version](#input\_datadog\_python\_layer\_version) | Version for the Datadog Python Layer | `number`       | `106` | no |
+| <a name="input_datadog_extension_layer_version"></a> [datadog\_extension\_layer\_version](#input\_datadog\_extension\_layer\_version) | Version for the DataDog Extension Layer | `number`       | `74` | no |
+| <a name="input_datadog_dotnet_layer_version"></a> [datadog\_dotnet\_layer\_version](#input\_datadog\_dotnet\_layer\_version) | Version for the DataDog .NET Layer | `number`       | `19` | no |
+| <a name="input_datadog_java_layer_version"></a> [datadog\_java\_layer\_version](#input\_datadog\_java\_layer\_version) | Version for the DataDog Java Layer | `number`       | `19` | no |
+| <a name="input_datadog_node_layer_version"></a> [datadog\_node\_layer\_version](#input\_datadog\_node\_layer\_version) | Version for the DataDog Node Layer | `number`       | `123` | no |
+| <a name="input_datadog_python_layer_version"></a> [datadog\_python\_layer\_version](#input\_datadog\_python\_layer\_version) | Version for the DataDog Python Layer | `number`       | `106` | no |
 | <a name="input_dead_letter_config_target_arn"></a> [dead\_letter\_config\_target\_arn](#input\_dead\_letter\_config\_target\_arn) | ARN of an SNS topic or SQS queue to notify when an invocation fails. | `string`       | `null` | no |
 | <a name="input_description"></a> [description](#input\_description) | Description of what your Lambda Function does. | `string`       | `null` | no |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Map of environment variables that are accessible from the function code during execution. | `map(string)`  | `{}` | no |
