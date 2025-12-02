@@ -109,6 +109,20 @@ output "python_3_8_function_name" {
   value       = module.lambda-python-3-8.function_name
 }
 
+output "node_24_arn" {
+  description = "Amazon Resource Name (ARN) identifying your Lambda Function."
+  value       = module.lambda-node-24.arn
+}
+
+output "node_24_invoke_arn" {
+  description = "ARN to be used for invoking Lambda Function from API Gateway."
+  value       = module.lambda-node-24.invoke_arn
+}
+
+output "node_24_function_name" {
+  description = "Unique name for your Lambda Function"
+  value       = module.lambda-node-24.function_name
+}
 
 output "node_22_arn" {
   description = "Amazon Resource Name (ARN) identifying your Lambda Function."

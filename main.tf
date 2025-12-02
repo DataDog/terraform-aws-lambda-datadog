@@ -44,6 +44,7 @@ locals {
     "nodejs18.x" = "Datadog-Node18-x"
     "nodejs20.x" = "Datadog-Node20-x"
     "nodejs22.x" = "Datadog-Node22-x"
+    "nodejs24.x" = "Datadog-Node24-x"
     "python3.8"  = "Datadog-Python38"
     "python3.9"  = "Datadog-Python39"
     "python3.10" = "Datadog-Python310"
@@ -109,6 +110,7 @@ check "runtime_support" {
         "nodejs18.x",
         "nodejs20.x",
         "nodejs22.x",
+        "nodejs24.x",
         "python3.8",
         "python3.9",
         "python3.10",

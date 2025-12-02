@@ -194,6 +194,25 @@ module "lambda-python-3-8" {
   }
 }
 
+module "lambda-node-24" {
+  source = "../"
+
+  filename      = "${path.module}/build/hello-node.zip"
+  function_name = "terraform-smoketest-node-24-${var.datadog_service_name}-function"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "index.lambda_handler"
+  runtime       = "nodejs24.x"
+  memory_size   = 256
+
+  environment_variables = {
+    "DD_API_KEY_SECRET_ARN" : var.datadog_secret_arn
+    "DD_ENV" : "dev"
+    "DD_SERVICE" : var.datadog_service_name
+    "DD_SITE" : var.datadog_site
+    "DD_VERSION" : "1.0.0"
+  }
+}
+
 module "lambda-node-22" {
   source = "../"
 
