@@ -41,6 +41,7 @@ locals {
     "java11"     = "dd-trace-java"
     "java17"     = "dd-trace-java"
     "java21"     = "dd-trace-java"
+    "java25"     = "dd-trace-java"
     "nodejs18.x" = "Datadog-Node18-x"
     "nodejs20.x" = "Datadog-Node20-x"
     "nodejs22.x" = "Datadog-Node22-x"
@@ -107,6 +108,7 @@ check "runtime_support" {
         "java11",
         "java17",
         "java21",
+        "java25",
         "nodejs18.x",
         "nodejs20.x",
         "nodejs22.x",

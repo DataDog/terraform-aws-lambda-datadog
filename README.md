@@ -100,7 +100,7 @@ module "lambda-datadog" {
   function_name = "example-function"
   role          = aws_iam_role.lambda_role.arn
   handler       = "com.example.Handler"
-  runtime       = "java21"
+  runtime       = "java25"
   memory_size   = 1024
 
   environment_variables = {
