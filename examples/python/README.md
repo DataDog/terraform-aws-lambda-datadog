@@ -1,15 +1,15 @@
 # Python Example
 
-A simple Python Lambda function with out of the box Datadog instrumentation.
+A simple Python Lambda function with out of the box DataDog instrumentation.
 
 ## Usage
 
-* Create a [Datadog API Key](https://app.datadoghq.com/organization-settings/api-keys)
-* Create a secret in [AWS Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html) and add the Datadog API Key as the secret value in plaintext
+* Create a [DataDog API Key](https://app.datadoghq.com/organization-settings/api-keys)
+* Create a secret in [AWS Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html) and add the DataDog API Key as the secret value in plaintext
 * Create a `terraform.tfvars` file
   - Set the `datadog_secret_arn` to the arn of the secret you just created
-  - Set the `datadog_service_name` to the name of the service you want to use to filter for the resource in Datadog
-  - Set the `datadog_site` to the [Datadog destination site](https://docs.datadoghq.com/getting_started/site/) for your metrics, traces, and logs
+  - Set the `datadog_service_name` to the name of the service you want to use to filter for the resource in DataDog
+  - Set the `datadog_site` to the [DataDog destination site](https://docs.datadoghq.com/getting_started/site/) for your metrics, traces, and logs
 * Run the following commands
 
 ```
@@ -53,8 +53,8 @@ terraform apply
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_datadog_secret_arn"></a> [datadog\_secret\_arn](#input\_datadog\_secret\_arn) | Secret for Datadog API Key | `string` | n/a | yes |
-| <a name="input_datadog_service_name"></a> [datadog\_service\_name](#input\_datadog\_service\_name) | Service used to filter for resources in Datadog | `string` | n/a | yes |
+| <a name="input_datadog_secret_arn"></a> [datadog\_secret\_arn](#input\_datadog\_secret\_arn) | Secret for DataDog API Key | `string` | n/a | yes |
+| <a name="input_datadog_service_name"></a> [datadog\_service\_name](#input\_datadog\_service\_name) | Service used to filter for resources in DataDog | `string` | n/a | yes |
 | <a name="input_datadog_site"></a> [datadog\_site](#input\_datadog\_site) | Destination site for your metrics, traces, and logs | `string` | n/a | yes |
 
 ## Outputs
