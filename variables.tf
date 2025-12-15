@@ -23,13 +23,13 @@ variable "datadog_java_layer_version" {
 variable "datadog_node_layer_version" {
   description = "Version for the Datadog Node Layer"
   type        = number
-  default     = 131
+  default     = 132
 }
 
 variable "datadog_python_layer_version" {
   description = "Version for the Datadog Python Layer"
   type        = number
-  default     = 119
+  default     = 120
 }
 
 variable "fips" {
