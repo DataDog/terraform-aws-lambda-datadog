@@ -32,6 +32,12 @@ variable "datadog_python_layer_version" {
   default     = 120
 }
 
+variable "datadog_ruby_layer_version" {
+  description = "Version for the Datadog Ruby Layer"
+  type        = number
+  default     = 26
+}
+
 variable "fips" {
   description = "Enable FIPS mode for Datadog Lambda extension"
   type        = bool
