@@ -35,7 +35,7 @@ variable "datadog_python_layer_version" {
 variable "datadog_ruby_layer_version" {
   description = "Version for the Datadog Ruby Layer"
   type        = number
-  default     = 26
+  default     = 27
 }
 
 variable "fips" {
