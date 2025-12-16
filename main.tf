@@ -20,18 +20,23 @@ locals {
     python = {
       DD_LAMBDA_HANDLER = var.handler
     }
+    ruby = {
+      DD_LAMBDA_HANDLER = var.handler
+    }
   }
   runtime_base_handler_map = {
     dotnet = var.handler
     java   = var.handler
     nodejs = "/opt/nodejs/node_modules/datadog-lambda-js/handler.handler"
     python = "datadog_lambda.handler.handler"
+    ruby   = var.handler
   }
   runtime_base_layer_version_map = {
     dotnet = var.datadog_dotnet_layer_version
     java   = var.datadog_java_layer_version
     nodejs = var.datadog_node_layer_version
     python = var.datadog_python_layer_version
+    ruby   = var.datadog_ruby_layer_version
   }
   runtime_layer_map = {
     "dotnet6"    = "dd-trace-dotnet"
@@ -52,6 +57,9 @@ locals {
     "python3.12" = "Datadog-Python312"
     "python3.13" = "Datadog-Python313"
     "python3.14" = "Datadog-Python314"
+    "ruby3.2"    = "Datadog-Ruby3-2"
+    "ruby3.3"    = "Datadog-Ruby3-3"
+    "ruby3.4"    = "Datadog-Ruby3-4"
   }
 }
 
@@ -120,6 +128,9 @@ check "runtime_support" {
         "python3.14",
         "provided.al2",
         "provided.al2023",
+        "ruby3.2",
+        "ruby3.3",
+        "ruby3.4",
       ],
     var.runtime)
     error_message = "${var.runtime} Lambda runtime is not supported by the lambda-datadog Terraform module"
