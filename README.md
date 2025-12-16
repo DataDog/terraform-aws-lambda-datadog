@@ -34,7 +34,7 @@ module "lambda-datadog" {
   }
 
   datadog_extension_layer_version = 90
-  datadog_python_layer_version = 106
+  datadog_python_layer_version = 120
 }
 ```
 
@@ -60,7 +60,7 @@ module "lambda-datadog" {
   }
 
   datadog_extension_layer_version = 90
-  datadog_node_layer_version = 123
+  datadog_node_layer_version = 132
 }
 ```
 
@@ -86,7 +86,7 @@ module "lambda-datadog" {
   }
 
   datadog_extension_layer_version = 90
-  datadog_dotnet_layer_version = 19
+  datadog_dotnet_layer_version = 23
 }
 ```
 
@@ -112,7 +112,7 @@ module "lambda-datadog" {
   }
 
   datadog_extension_layer_version = 90
-  datadog_java_layer_version = 19
+  datadog_java_layer_version = 24
 }
 ```
 
@@ -286,10 +286,10 @@ No modules.
 | <a name="input_architectures"></a> [architectures](#input\_architectures) | Instruction set architecture for your Lambda function. Valid values are ["x86\_64"] and ["arm64"]. | `list(string)` | <pre>["x86_64"]</pre> | no |
 | <a name="input_code_signing_config_arn"></a> [code\_signing\_config\_arn](#input\_code\_signing\_config\_arn) | To enable code signing for this function, specify the ARN of a code-signing configuration. A code-signing configuration includes a set of signing profiles, which define the trusted publishers for this function. | `string`       | `null` | no |
 | <a name="input_datadog_extension_layer_version"></a> [datadog\_extension\_layer\_version](#input\_datadog\_extension\_layer\_version) | Version for the Datadog Extension Layer | `number`       | `90` | no |
-| <a name="input_datadog_dotnet_layer_version"></a> [datadog\_dotnet\_layer\_version](#input\_datadog\_dotnet\_layer\_version) | Version for the Datadog .NET Layer | `number`       | `19` | no |
-| <a name="input_datadog_java_layer_version"></a> [datadog\_java\_layer\_version](#input\_datadog\_java\_layer\_version) | Version for the Datadog Java Layer | `number`       | `19` | no |
-| <a name="input_datadog_node_layer_version"></a> [datadog\_node\_layer\_version](#input\_datadog\_node\_layer\_version) | Version for the Datadog Node Layer | `number`       | `123` | no |
-| <a name="input_datadog_python_layer_version"></a> [datadog\_python\_layer\_version](#input\_datadog\_python\_layer\_version) | Version for the Datadog Python Layer | `number`       | `106` | no |
+| <a name="input_datadog_dotnet_layer_version"></a> [datadog\_dotnet\_layer\_version](#input\_datadog\_dotnet\_layer\_version) | Version for the Datadog .NET Layer | `number`       | `23` | no |
+| <a name="input_datadog_java_layer_version"></a> [datadog\_java\_layer\_version](#input\_datadog\_java\_layer\_version) | Version for the Datadog Java Layer | `number`       | `24` | no |
+| <a name="input_datadog_node_layer_version"></a> [datadog\_node\_layer\_version](#input\_datadog\_node\_layer\_version) | Version for the Datadog Node Layer | `number`       | `132` | no |
+| <a name="input_datadog_python_layer_version"></a> [datadog\_python\_layer\_version](#input\_datadog\_python\_layer\_version) | Version for the Datadog Python Layer | `number`       | `120` | no |
 | <a name="input_datadog_ruby_layer_version"></a> [datadog\_ruby\_layer\_version](#input\_datadog\_ruby\_layer\_version) | Version for the Datadog Ruby Layer | `number`       | `26` | no |
 | <a name="input_dead_letter_config_target_arn"></a> [dead\_letter\_config\_target\_arn](#input\_dead\_letter\_config\_target\_arn) | ARN of an SNS topic or SQS queue to notify when an invocation fails. | `string`       | `null` | no |
 | <a name="input_description"></a> [description](#input\_description) | Description of what your Lambda Function does. | `string`       | `null` | no |
