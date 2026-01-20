@@ -42,6 +42,7 @@ locals {
     "dotnet6"    = "dd-trace-dotnet"
     "dotnet7"    = "dd-trace-dotnet"
     "dotnet8"    = "dd-trace-dotnet"
+    "dotnet10"   = "dd-trace-dotnet"
     "java8.al2"  = "dd-trace-java"
     "java11"     = "dd-trace-java"
     "java17"     = "dd-trace-java"
@@ -112,6 +113,7 @@ check "runtime_support" {
         "dotnet6",
         "dotnet7",
         "dotnet8",
+        "dotnet10",
         "java8.al2",
         "java11",
         "java17",
