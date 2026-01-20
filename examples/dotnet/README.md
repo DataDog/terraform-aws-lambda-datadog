@@ -13,8 +13,9 @@ A simple .NET Lambda function with out of the box Datadog instrumentation.
 * Run the following commands
 
 ```
+dotnet tool install -g Amazon.Lambda.Tools
 dotnet restore ./src/HelloWorld
-dotnet lambda package --configuration Debug --framework net8.0 --output-package src/HelloWorld/bin/release/net8.0/hello-dotnet.zip --project-location ./src/HelloWorld
+dotnet lambda package --configuration Debug --framework net10.0 --output-package src/HelloWorld/bin/release/net10.0/hello-dotnet.zip --project-location ./src/HelloWorld
 terraform init
 terraform plan
 terraform apply

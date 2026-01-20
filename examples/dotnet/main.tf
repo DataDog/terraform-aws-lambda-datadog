@@ -45,12 +45,12 @@ resource "aws_iam_role_policy_attachment" "attach_secrets_manager_policy" {
 module "lambda-datadog" {
   source = "../../"
 
-  filename         = "${path.module}/src/HelloWorld/bin/release/net8.0/hello-dotnet.zip"
-  source_code_hash = filebase64sha256("${path.module}/src/HelloWorld/bin/release/net8.0/hello-dotnet.zip")
+  filename         = "${path.module}/src/HelloWorld/bin/release/net10.0/hello-dotnet.zip"
+  source_code_hash = filebase64sha256("${path.module}/src/HelloWorld/bin/release/net10.0/hello-dotnet.zip")
   function_name    = "terraform-example-dotnet-${var.datadog_service_name}-function"
   role             = aws_iam_role.lambda_role.arn
   handler          = "HelloWorld::HelloWorld.Function::Handler"
-  runtime          = "dotnet8"
+  runtime          = "dotnet10"
   memory_size      = 256
 
   environment_variables = {

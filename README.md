@@ -74,7 +74,7 @@ module "lambda-datadog" {
   function_name = "example-function"
   role          = aws_iam_role.lambda_role.arn
   handler       = "Example::Example.Function::Handler"
-  runtime       = "dotnet8"
+  runtime       = "dotnet10"
   memory_size   = 256
 
   environment_variables = {
