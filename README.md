@@ -27,6 +27,8 @@ module "lambda-datadog" {
 
   environment_variables = {
     "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
+    # Or use SSM Parameter Store:
+    # "DD_API_KEY_SSM_ARN" : "arn:aws:ssm:us-east-1:000000000000:parameter/dd_api_key"
     "DD_ENV" : "dev"
     "DD_SERVICE" : "example-service"
     "DD_SITE": "datadoghq.com"
@@ -53,6 +55,8 @@ module "lambda-datadog" {
 
   environment_variables = {
     "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
+    # Or use SSM Parameter Store:
+    # "DD_API_KEY_SSM_ARN" : "arn:aws:ssm:us-east-1:000000000000:parameter/dd_api_key"
     "DD_ENV" : "dev"
     "DD_SERVICE" : "example-service"
     "DD_SITE": "datadoghq.com"
@@ -79,6 +83,8 @@ module "lambda-datadog" {
 
   environment_variables = {
     "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
+    # Or use SSM Parameter Store:
+    # "DD_API_KEY_SSM_ARN" : "arn:aws:ssm:us-east-1:000000000000:parameter/dd_api_key"
     "DD_ENV" : "dev"
     "DD_SERVICE" : "example-service"
     "DD_SITE": "datadoghq.com"
@@ -105,6 +111,8 @@ module "lambda-datadog" {
 
   environment_variables = {
     "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
+    # Or use SSM Parameter Store:
+    # "DD_API_KEY_SSM_ARN" : "arn:aws:ssm:us-east-1:000000000000:parameter/dd_api_key"
     "DD_ENV" : "dev"
     "DD_SERVICE" : "example-service"
     "DD_SITE": "datadoghq.com"
@@ -131,6 +139,8 @@ module "lambda-datadog" {
 
   environment_variables = {
     "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
+    # Or use SSM Parameter Store:
+    # "DD_API_KEY_SSM_ARN" : "arn:aws:ssm:us-east-1:000000000000:parameter/dd_api_key"
     "DD_ENV" : "dev"
     "DD_SERVICE" : "example-service"
     "DD_SITE": "datadoghq.com"
@@ -156,6 +166,8 @@ module "lambda-datadog" {
 
   environment_variables = {
     "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
+    # Or use SSM Parameter Store:
+    # "DD_API_KEY_SSM_ARN" : "arn:aws:ssm:us-east-1:000000000000:parameter/dd_api_key"
     "DD_ENV" : "dev"
     "DD_SERVICE" : "example-service"
     "DD_SITE": "datadoghq.com"
@@ -193,6 +205,8 @@ resource "aws_lambda_function" "example_lambda_function" {
   environment {
     variables = {
         "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
+        # Or use SSM Parameter Store:
+        # "DD_API_KEY_SSM_ARN" : "arn:aws:ssm:us-east-1:000000000000:parameter/dd_api_key"
         "DD_ENV" : "dev"
         "DD_SITE": "datadoghq.com"
         "DD_SERVICE" : "example-service"
@@ -214,6 +228,8 @@ module "lambda-datadog" {
 
   environment_variables = {
     "DD_API_KEY_SECRET_ARN" : "arn:aws:secretsmanager:us-east-1:000000000000:secret:example-secret"
+    # Or use SSM Parameter Store:
+    # "DD_API_KEY_SSM_ARN" : "arn:aws:ssm:us-east-1:000000000000:parameter/dd_api_key"
     "DD_ENV" : "dev"
     "DD_SITE": "datadoghq.com"
     "DD_SERVICE" : "example-service"
