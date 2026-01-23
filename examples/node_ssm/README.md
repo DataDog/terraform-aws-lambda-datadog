@@ -16,32 +16,36 @@ Store your Datadog API key in SSM Parameter Store:
 
 ```bash
 aws ssm put-parameter \
-  --name "/dev/DD_API_KEY" \
+  --name "/datadog/api-key" \
   --value "YOUR_DATADOG_API_KEY" \
   --type "SecureString" \
-  --region us-east-2
+  --region us-east-1
 ```
 
 ### 2. Configure Variables
 
-The `terraform.tfvars` file is already configured:
+Create a `terraform.tfvars` file:
 
 ```hcl
-datadog_parameter_arn  = "arn:aws:ssm:us-east-2:425362996713:parameter/dev/DD_API_KEY"
-datadog_service_name   = "test-lambda-ssm"
+datadog_parameter_arn  = "arn:aws:ssm:us-east-1:000000000:parameter/datadog/api-key"
+datadog_service_name   = "my-nodejs-lambda"
 datadog_site           = "datadoghq.com"
 ```
 
-### 3. Deploy with aws-vault
+### 3. Deploy
 
+Using aws-vault:
 ```bash
-# Using the deploy script
-aws-vault exec sso-serverless-sandbox-account-admin -- ./deploy.sh
+aws-vault exec YOUR_PROFILE -- terraform init
+aws-vault exec YOUR_PROFILE -- terraform plan
+aws-vault exec YOUR_PROFILE -- terraform apply
+```
 
-# Or manually
-aws-vault exec sso-serverless-sandbox-account-admin -- terraform init
-aws-vault exec sso-serverless-sandbox-account-admin -- terraform plan
-aws-vault exec sso-serverless-sandbox-account-admin -- terraform apply
+Or if credentials are already configured:
+```bash
+terraform init
+terraform plan
+terraform apply
 ```
 
 ## Testing
@@ -49,9 +53,9 @@ aws-vault exec sso-serverless-sandbox-account-admin -- terraform apply
 Invoke the Lambda function:
 
 ```bash
-aws-vault exec sso-serverless-sandbox-account-admin -- aws lambda invoke \
+aws lambda invoke \
   --function-name $(terraform output -raw function_name) \
-  --region us-east-2 \
+  --region us-east-1 \
   output.json
 
 cat output.json
@@ -60,7 +64,7 @@ cat output.json
 ## Cleanup
 
 ```bash
-aws-vault exec sso-serverless-sandbox-account-admin -- terraform destroy
+terraform destroy
 ```
 
 ## Key Differences from Secrets Manager Example
@@ -73,4 +77,3 @@ aws-vault exec sso-serverless-sandbox-account-admin -- terraform destroy
 
 - [Datadog Node.js Lambda Instrumentation](https://docs.datadoghq.com/serverless/aws_lambda/instrumentation/nodejs/)
 - [AWS Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html)
-

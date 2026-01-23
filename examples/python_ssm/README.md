@@ -19,7 +19,7 @@ aws ssm put-parameter \
   --name "/datadog/api-key" \
   --value "YOUR_DATADOG_API_KEY" \
   --type "SecureString" \
-  --region us-east-2
+  --region us-east-1
 ```
 
 ### 2. Configure Variables
@@ -27,7 +27,7 @@ aws ssm put-parameter \
 Create a `terraform.tfvars` file:
 
 ```hcl
-datadog_parameter_arn  = "arn:aws:ssm:us-east-2:123456789012:parameter/datadog/api-key"
+datadog_parameter_arn  = "arn:aws:ssm:us-east-1:123456789012:parameter/datadog/api-key"
 datadog_service_name   = "my-python-lambda"
 datadog_site           = "datadoghq.com"
 ```
@@ -55,7 +55,7 @@ Invoke the Lambda function:
 ```bash
 aws lambda invoke \
   --function-name $(terraform output -raw function_name) \
-  --region us-east-2 \
+  --region us-east-1 \
   output.json
 
 cat output.json
@@ -77,4 +77,3 @@ terraform destroy
 
 - [Datadog Python Lambda Instrumentation](https://docs.datadoghq.com/serverless/aws_lambda/instrumentation/python/)
 - [AWS Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html)
-
