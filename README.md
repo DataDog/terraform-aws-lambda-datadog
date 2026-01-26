@@ -100,7 +100,7 @@ module "lambda-datadog" {
 ```
 module "lambda-datadog" {
   source  = "DataDog/lambda-datadog/aws"
-  version = "6.0"
+  version = "4.6.0"
 
   filename      = "example.jar"
   function_name = "example-function"
