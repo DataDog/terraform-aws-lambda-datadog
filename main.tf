@@ -62,6 +62,7 @@ locals {
     "ruby3.2"    = "Datadog-Ruby3-2"
     "ruby3.3"    = "Datadog-Ruby3-3"
     "ruby3.4"    = "Datadog-Ruby3-4"
+    "ruby4.0"    = "Datadog-Ruby4-0"
   }
 }
 
@@ -135,6 +136,7 @@ check "runtime_support" {
         "ruby3.2",
         "ruby3.3",
         "ruby3.4",
+        "ruby4.0",
       ],
     var.runtime)
     error_message = "${var.runtime} Lambda runtime is not supported by the lambda-datadog Terraform module"
