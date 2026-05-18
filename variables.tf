@@ -5,7 +5,7 @@
 variable "datadog_extension_layer_version" {
   description = "Version for the Datadog Extension Layer"
   type        = number
-  default     = 96
+  default     = 97
 }
 
 variable "datadog_dotnet_layer_version" {
