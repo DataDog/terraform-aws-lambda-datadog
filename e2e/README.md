@@ -82,23 +82,26 @@ suite runs the full lifecycle.
 
 To activate, configure on the repo (Settings → Secrets and variables → Actions):
 
-**Variables**
+**Variables** (no secrets -- Datadog auth is federated via dd-sts):
 
 | Variable                       | Example                                                       |
 | ------------------------------ | ------------------------------------------------------------- |
-| `AWS_ROLE_ARN_E2E`             | `arn:aws:iam::<acct>:role/gh-oidc-terraform-aws-lambda-e2e`   |
+| `AWS_ROLE_ARN_E2E`             | `arn:aws:iam::<acct>:role/gha-terraform-aws-lambda-datadog-e2e` |
 | `AWS_REGION_E2E`               | `us-east-1`                                                   |
-| `DD_API_KEY_SECRET_ARN_E2E`    | ARN of the Secrets Manager secret holding the Datadog API key |
+| `DD_API_KEY_SECRET_ARN_E2E`    | ARN of the Secrets Manager secret the workload reads          |
 | `DATADOG_SITE_E2E`             | `datadoghq.com`                                               |
 | `DD_NODE_LAYER_VERSION_E2E`    | pinned Node layer version                                     |
 | `DD_EXTENSION_LAYER_VERSION_E2E` | pinned extension layer version                              |
 
-**Secrets**
+**Datadog auth (dd-sts).** The workflow obtains short-lived Datadog API + App keys at
+runtime via [`DataDog/dd-sts-action`](https://github.com/DataDog/dd-sts-action), governed
+by the policy `terraform-aws-lambda-datadog-e2e` in
+[`dd-source`](https://github.com/DataDog/dd-source/tree/main/domains/seceng/sit/apps/apis/dd-sts/config/policies/us1.ddbuild.io)
+(org 2, scoped to `apm_read` + `logs_read_data`). The same issued API key is written into
+the Secrets Manager secret so the workload ships to the org the suite queries. No static
+Datadog keys live in this repo. See the
+[dd-sts user guide](https://datadoghq.atlassian.net/wiki/spaces/SECENG/pages/5769659435/User+guide+dd-sts).
 
-| Secret                | Description                                  |
-| --------------------- | -------------------------------------------- |
-| `DATADOG_API_KEY_E2E` | API key for querying spans/logs (same org).  |
-| `DATADOG_APP_KEY_E2E` | App key for querying the Datadog API.        |
-
-The IAM role must trust GitHub's OIDC provider for this repo and allow managing Lambda
-functions, IAM roles, and reading the secret -- scoped to `one-e2e-tflambda-*` resources.
+The AWS OIDC role must trust GitHub's OIDC provider for this repo and allow managing
+Lambda functions + per-run IAM roles and writing the workload secret -- scoped to
+`one-e2e-tflambda-*` resources (full policy in `serverless-ci/e2e/iam-infra.md`).
