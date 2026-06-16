@@ -73,5 +73,32 @@ aws-vault exec sso-serverless-sandbox-account-admin -- \
 
 `.github/workflows/e2e.yml` runs the suite behind a path filter (module sources + `e2e/`)
 and a `SKIP_LAMBDA_TESTS` flag, authenticating to AWS via OIDC federation
-(`id-token: write`, no long-lived keys). The Datadog keys come from repo secrets; the
-secret ARN, region, site, and pinned layer versions from repo variables.
+(`id-token: write`, no long-lived keys).
+
+The live cloud run is additionally gated on the `AWS_ROLE_ARN_E2E` repo variable being
+set: until an admin wires up federation and the values below, the job runs and passes by
+skipping the cloud lifecycle. Once configured, every PR that touches the module or this
+suite runs the full lifecycle.
+
+To activate, configure on the repo (Settings → Secrets and variables → Actions):
+
+**Variables**
+
+| Variable                       | Example                                                       |
+| ------------------------------ | ------------------------------------------------------------- |
+| `AWS_ROLE_ARN_E2E`             | `arn:aws:iam::<acct>:role/gh-oidc-terraform-aws-lambda-e2e`   |
+| `AWS_REGION_E2E`               | `us-east-1`                                                   |
+| `DD_API_KEY_SECRET_ARN_E2E`    | ARN of the Secrets Manager secret holding the Datadog API key |
+| `DATADOG_SITE_E2E`             | `datadoghq.com`                                               |
+| `DD_NODE_LAYER_VERSION_E2E`    | pinned Node layer version                                     |
+| `DD_EXTENSION_LAYER_VERSION_E2E` | pinned extension layer version                              |
+
+**Secrets**
+
+| Secret                | Description                                  |
+| --------------------- | -------------------------------------------- |
+| `DATADOG_API_KEY_E2E` | API key for querying spans/logs (same org).  |
+| `DATADOG_APP_KEY_E2E` | App key for querying the Datadog API.        |
+
+The IAM role must trust GitHub's OIDC provider for this repo and allow managing Lambda
+functions, IAM roles, and reading the secret -- scoped to `one-e2e-tflambda-*` resources.
