@@ -1,0 +1,78 @@
+name: e2e
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  # Path filter: only run the (slow, cloud-touching) e2e job when the module or the
+  # suite itself changes.
+  changes:
+    name: Detect relevant changes
+    runs-on: ubuntu-latest
+    outputs:
+      lambda: ${{ steps.filter.outputs.lambda }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            lambda:
+              - 'main.tf'
+              - 'variables.tf'
+              - 'outputs.tf'
+              - 'versions.tf'
+              - 'e2e/**'
+              - '.github/workflows/e2e.yml'
+
+  e2e-test:
+    name: Lambda instrumentation lifecycle
+    runs-on: ubuntu-latest
+    needs: [changes]
+    # OIDC federation to AWS; never long-lived keys.
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      # Skip the cloud lifecycle unless the module or suite changed.
+      SKIP_LAMBDA_TESTS: ${{ needs.changes.outputs.lambda != 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: e2e/go.mod
+          cache-dependency-path: e2e/go.sum
+
+      - name: Set up Terraform
+        if: needs.changes.outputs.lambda == 'true'
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.7
+          terraform_wrapper: false
+
+      - name: Configure AWS credentials (OIDC)
+        if: needs.changes.outputs.lambda == 'true'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN_E2E }}
+          aws-region: ${{ vars.AWS_REGION_E2E }}
+
+      - name: Run e2e suite
+        working-directory: e2e
+        run: go test -v -timeout 45m .
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION_E2E }}
+          DD_API_KEY_SECRET_ARN: ${{ vars.DD_API_KEY_SECRET_ARN_E2E }}
+          DATADOG_SITE: ${{ vars.DATADOG_SITE_E2E }}
+          DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY_E2E }}
+          DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY_E2E }}
+          # Pin artifacts so a telemetry failure blames the module, not upstream.
+          DD_NODE_LAYER_VERSION: ${{ vars.DD_NODE_LAYER_VERSION_E2E }}
+          DD_EXTENSION_LAYER_VERSION: ${{ vars.DD_EXTENSION_LAYER_VERSION_E2E }}
