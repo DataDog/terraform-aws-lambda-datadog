@@ -28,9 +28,9 @@ concurrency:
 
 jobs:
   # Path filter: only run the (slow, cloud-touching) e2e job when the module or the
-  # suite itself changes. The live run is additionally gated on AWS OIDC federation being
-  # configured (the AWS_ROLE_ARN_E2E repo variable), so the job is green until an admin
-  # wires up federation + secrets, and runs for real once they do.
+  # suite itself changes. When relevant files change the suite runs for real and the
+  # Datadog (dd-sts) / AWS OIDC steps must succeed -- a federation/auth failure fails
+  # the job loudly rather than skipping green.
   changes:
     name: Detect relevant changes
     runs-on: ubuntu-latest
@@ -52,13 +52,12 @@ jobs:
       - id: gate
         env:
           CHANGED: ${{ steps.filter.outputs.lambda }}
-          FEDERATION_CONFIGURED: ${{ vars.AWS_ROLE_ARN_E2E != '' }}
         run: |
-          if [ "$CHANGED" = "true" ] && [ "$FEDERATION_CONFIGURED" = "true" ]; then
+          if [ "$CHANGED" = "true" ]; then
             echo "should_run=true" >> "$GITHUB_OUTPUT"
           else
             echo "should_run=false" >> "$GITHUB_OUTPUT"
-            echo "Skipping live e2e: changed=$CHANGED federation_configured=$FEDERATION_CONFIGURED"
+            echo "Skipping live e2e: no relevant changes (changed=$CHANGED)"
           fi
 
   e2e-test:
