@@ -182,14 +182,18 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 		invokeLambda(t, ctx, cfg.region, serviceName)
 
 		client := telemetry.NewClient(cfg.site, cfg.ddAPIKey, cfg.ddAppKey)
-		pollCtx, cancel := context.WithTimeout(ctx, 6*time.Minute)
-		defer cancel()
 
-		span, err := client.WaitForMatching(pollCtx, "spans", client.SearchSpans, telemetry.SpanQuery(id), id)
+		// Spans and logs are polled sequentially; give each its own full budget so a
+		// slow spans poll can't starve the logs poll of time.
+		spanCtx, cancelSpan := context.WithTimeout(ctx, 6*time.Minute)
+		defer cancelSpan()
+		span, err := client.WaitForMatching(spanCtx, "spans", client.SearchSpans, telemetry.SpanQuery(id), id)
 		require.NoError(t, err, "spans carrying the workload identity should appear")
 		t.Logf("span identity verified: %+v", span.Attrs)
 
-		log, err := client.WaitForMatching(pollCtx, "logs", client.SearchLogs, telemetry.LogQuery(id), id)
+		logCtx, cancelLog := context.WithTimeout(ctx, 6*time.Minute)
+		defer cancelLog()
+		log, err := client.WaitForMatching(logCtx, "logs", client.SearchLogs, telemetry.LogQuery(id), id)
 		require.NoError(t, err, "logs carrying the workload identity should appear")
 		t.Logf("log identity verified: %+v", log.Attrs)
 	})
