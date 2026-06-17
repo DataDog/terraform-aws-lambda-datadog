@@ -75,12 +75,12 @@ aws-vault exec sso-serverless-sandbox-account-admin -- \
 and a `SKIP_LAMBDA_TESTS` flag, authenticating to AWS via OIDC federation
 (`id-token: write`, no long-lived keys).
 
-The live cloud run is additionally gated on the `AWS_ROLE_ARN_E2E` repo variable being
-set: until an admin wires up federation and the values below, the job runs and passes by
-skipping the cloud lifecycle. Once configured, every PR that touches the module or this
-suite runs the full lifecycle.
+The live cloud run is gated only on path relevance: every PR that touches the module or
+this suite runs the full lifecycle, and the AWS OIDC / dd-sts auth steps must then succeed
+-- an auth or federation failure fails the job loudly rather than skipping green. When no
+relevant files change, the suite no-ops via `SKIP_LAMBDA_TESTS`.
 
-To activate, configure on the repo (Settings → Secrets and variables → Actions):
+Required repo configuration (Settings → Secrets and variables → Actions):
 
 **Variables** (no secrets -- Datadog auth is federated via dd-sts):
 
