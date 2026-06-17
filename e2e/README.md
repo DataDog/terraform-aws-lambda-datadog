@@ -99,8 +99,7 @@ by the policy `terraform-aws-lambda-datadog-e2e` in
 [`dd-source`](https://github.com/DataDog/dd-source/tree/main/domains/seceng/sit/apps/apis/dd-sts/config/policies/us1.ddbuild.io)
 (org 2, scoped to `apm_read` + `logs_read_data`). The same issued API key is written into
 the Secrets Manager secret so the workload ships to the org the suite queries. No static
-Datadog keys live in this repo. See the
-[dd-sts user guide](https://datadoghq.atlassian.net/wiki/spaces/SECENG/pages/5769659435/User+guide+dd-sts).
+Datadog keys live in this repo.
 
 The AWS OIDC role must trust GitHub's OIDC provider for this repo and allow managing
 Lambda functions + per-run IAM roles and writing the workload secret -- scoped to
