@@ -121,7 +121,7 @@ jobs:
         env:
           AWS_REGION: ${{ vars.AWS_REGION_E2E }}
           DD_API_KEY_SECRET_ARN: ${{ vars.DD_API_KEY_SECRET_ARN_E2E }}
-          DATADOG_SITE: ${{ vars.DD_SITE_E2E || 'datadoghq.com' }}
+          DATADOG_SITE: ${{ vars.DATADOG_SITE_E2E || 'datadoghq.com' }}
           DATADOG_API_KEY: ${{ steps.dd-sts.outputs.api_key }}
           DATADOG_APP_KEY: ${{ steps.dd-sts.outputs.app_key }}
           # Pin artifacts so a telemetry failure blames the module, not upstream.
