@@ -3,10 +3,28 @@ name: e2e
 on:
   push:
     branches: [main]
+    paths:
+      - 'main.tf'
+      - 'variables.tf'
+      - 'outputs.tf'
+      - 'versions.tf'
+      - 'e2e/**'
+      - '.github/workflows/e2e.yml'
   pull_request:
+    paths:
+      - 'main.tf'
+      - 'variables.tf'
+      - 'outputs.tf'
+      - 'versions.tf'
+      - 'e2e/**'
+      - '.github/workflows/e2e.yml'
 
 permissions:
   contents: read
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # Path filter: only run the (slow, cloud-touching) e2e job when the module or the
@@ -19,8 +37,8 @@ jobs:
     outputs:
       should_run: ${{ steps.gate.outputs.should_run }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v3
         id: filter
         with:
           filters: |
@@ -54,17 +72,17 @@ jobs:
     env:
       SKIP_LAMBDA_TESTS: ${{ needs.changes.outputs.should_run != 'true' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
           go-version-file: e2e/go.mod
           cache-dependency-path: e2e/go.sum
 
       - name: Set up Terraform
         if: needs.changes.outputs.should_run == 'true'
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3
         with:
           terraform_version: 1.5.7
           terraform_wrapper: false
@@ -81,7 +99,7 @@ jobs:
 
       - name: Configure AWS credentials (OIDC)
         if: needs.changes.outputs.should_run == 'true'
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN_E2E }}
           aws-region: ${{ vars.AWS_REGION_E2E }}
@@ -104,7 +122,7 @@ jobs:
         env:
           AWS_REGION: ${{ vars.AWS_REGION_E2E }}
           DD_API_KEY_SECRET_ARN: ${{ vars.DD_API_KEY_SECRET_ARN_E2E }}
-          DATADOG_SITE: ${{ vars.DATADOG_SITE_E2E }}
+          DATADOG_SITE: ${{ vars.DD_SITE_E2E || 'datadoghq.com' }}
           DATADOG_API_KEY: ${{ steps.dd-sts.outputs.api_key }}
           DATADOG_APP_KEY: ${{ steps.dd-sts.outputs.app_key }}
           # Pin artifacts so a telemetry failure blames the module, not upstream.
