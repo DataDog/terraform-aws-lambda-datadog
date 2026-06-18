@@ -44,29 +44,37 @@ Prerequisites:
   ```
   aws-vault exec sso-serverless-sandbox-account-admin -- go test -v -timeout 45m .
   ```
-- **Tooling** -- `terraform` (>= 1.5), `go` (see `go.mod`), and the `aws` CLI on `PATH`.
-- A **Secrets Manager secret** in that account holding a valid Datadog API key, plus a
-  Datadog **app key** for the same org so the suite can query the API.
+- **Tooling** -- `terraform` (>= 1.5), `go` (see `go.mod`), the `aws` CLI, and `dd-auth` on
+  `PATH`.
+- A **Secrets Manager secret** in that account holding a valid Datadog API key for the org
+  the suite queries, so the workload ships telemetry where the test looks for it.
 
 Environment variables:
 
 | Variable                     | Required | Description                                                        |
 | ---------------------------- | :------: | ------------------------------------------------------------------ |
 | `DD_API_KEY_SECRET_ARN`      |   yes    | ARN of the Secrets Manager secret the extension reads.             |
-| `DATADOG_API_KEY`            |   yes    | API key for querying spans/logs (same org as the secret).          |
-| `DATADOG_APP_KEY`            |   yes    | App key for querying the Datadog API.                              |
+| `DATADOG_API_KEY`            |   yes    | API key for querying spans/logs (injected by `dd-auth` below).     |
+| `DATADOG_APP_KEY`            |   yes    | App key for querying the Datadog API (injected by `dd-auth` below).|
 | `AWS_REGION`                 |    no    | Defaults to `us-east-1`.                                           |
 | `DATADOG_SITE`               |    no    | Defaults to `datadoghq.com`.                                       |
 | `DD_NODE_LAYER_VERSION`      |    no    | Pin the asserted Node layer version (defaults to the module's).    |
 | `DD_EXTENSION_LAYER_VERSION` |    no    | Pin the asserted extension layer version (defaults to the module's).|
 | `SKIP_LAMBDA_TESTS`          |    no    | Set to `true` to skip the suite.                                   |
 
+The suite needs Datadog API + App keys to query spans and logs. Use `dd-auth` to mint
+short-lived keys for the org instead of pasting long-lived ones; it injects `$DD_API_KEY`
+and `$DD_APP_KEY` into the wrapped command only. Because those vars exist only inside the
+`bash -c '...'` subprocess, the whole `go test` invocation runs inside it:
+
 ```
 cd e2e
-aws-vault exec sso-serverless-sandbox-account-admin -- \
-  DD_API_KEY_SECRET_ARN=arn:aws:secretsmanager:us-east-1:...:secret:dd-api-key \
-  DATADOG_API_KEY=... DATADOG_APP_KEY=... \
-  go test -v -timeout 45m .
+dd-auth --domain app.datadoghq.com -- bash -c '
+  export DATADOG_API_KEY="$DD_API_KEY" DATADOG_APP_KEY="$DD_APP_KEY"
+  aws-vault exec sso-serverless-sandbox-account-admin -- \
+    env DD_API_KEY_SECRET_ARN=arn:aws:secretsmanager:us-east-1:...:secret:dd-api-key \
+    go test -v -timeout 45m .
+'
 ```
 
 ## In CI
