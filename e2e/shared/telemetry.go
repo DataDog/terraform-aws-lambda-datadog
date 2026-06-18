@@ -11,7 +11,6 @@ import (
 	"io"
 	"net/http"
 	"slices"
-	"strings"
 	"time"
 )
 
@@ -248,11 +247,15 @@ func (c *TelemetryClient) WaitForMatching(
 		label, telemetryMaxAttempts, time.Duration(telemetryMaxAttempts)*telemetryPollInterval, lastErr)
 }
 
-// SpanQuery / LogQuery build the run-id-scoped search queries from an Identity.
+// SpanQuery / LogQuery build the server-side search filter from an Identity. They differ
+// by surface: the spans search treats service as a span attribute (@service:), the logs
+// search as a reserved tag (service:) -- matching the datadog-ci reference impl. Full
+// run-id identity is asserted in-process by Identity.matches, so the server-side filter
+// only scopes by service.
 func SpanQuery(id Identity) string {
-	return strings.Join([]string{"service:" + id.Service, id.runIDKey() + ":" + id.RunID}, " ")
+	return "@service:" + id.Service
 }
 
 func LogQuery(id Identity) string {
-	return strings.Join([]string{"service:" + id.Service, id.runIDKey() + ":" + id.RunID}, " ")
+	return "service:" + id.Service
 }
