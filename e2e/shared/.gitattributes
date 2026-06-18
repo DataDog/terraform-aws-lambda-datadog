@@ -3,4 +3,5 @@ doc.go linguist-generated=true
 exec.go linguist-generated=true
 naming.go linguist-generated=true
 telemetry.go linguist-generated=true
+traffic.go linguist-generated=true
 verifier.go linguist-generated=true
