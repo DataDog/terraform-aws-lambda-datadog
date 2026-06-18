@@ -9,9 +9,6 @@ package e2e
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
-	"fmt"
 	"os"
 	"strconv"
 	"testing"
@@ -20,9 +17,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/require"
 
-	"github.com/DataDog/terraform-aws-lambda-datadog/e2e/internal/awscli"
-	"github.com/DataDog/terraform-aws-lambda-datadog/e2e/internal/telemetry"
-	"github.com/DataDog/terraform-aws-lambda-datadog/e2e/internal/verifier"
+	e2eshared "github.com/DataDog/terraform-aws-lambda-datadog/e2e/shared"
 )
 
 // Canonical, pinned artifacts. One runtime per platform; exhaustiveness lives upstream.
@@ -88,15 +83,6 @@ func loadConfig(t *testing.T) config {
 	}
 }
 
-func newRunID(t *testing.T) string {
-	t.Helper()
-	b := make([]byte, 4)
-	_, err := rand.Read(b)
-	require.NoError(t, err)
-
-	return hex.EncodeToString(b)
-}
-
 func TestLambdaInstrumentationLifecycle(t *testing.T) {
 	if os.Getenv("SKIP_LAMBDA_TESTS") == "true" {
 		t.Skip("SKIP_LAMBDA_TESTS=true")
@@ -105,9 +91,9 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 	cfg := loadConfig(t)
 	ctx := context.Background()
 
-	runID := newRunID(t)
+	runID := e2eshared.NewRunID()
 	// one-e2e-<tool>-<platform>-<runid>: identity + sweeper blast-radius guard.
-	serviceName := fmt.Sprintf("one-e2e-tflambda-lambda-%s", runID)
+	serviceName := e2eshared.ResourceName(sharedCfg, runID)
 	createdTS := strconv.FormatInt(time.Now().Unix(), 10)
 	t.Logf("workload service=%s run_id=%s region=%s", serviceName, runID, cfg.region)
 
@@ -150,8 +136,8 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 	opts.Vars = commonVars(false)
 	terraform.InitAndApply(t, opts)
 
-	id := telemetry.Identity{Service: serviceName, Env: "e2e", Version: "1.0.0", RunID: runID}
-	exp := verifier.Expectations{
+	id := e2eshared.IdentityFor(sharedCfg, serviceName, "e2e", "1.0.0", runID)
+	exp := Expectations{
 		Service:               serviceName,
 		Env:                   "e2e",
 		Version:               "1.0.0",
@@ -170,30 +156,30 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 		functionName := terraform.Output(t, opts, "function_name")
 		functionArn := terraform.Output(t, opts, "function_arn")
 
-		fnCfg, err := verifier.GetConfig(ctx, cfg.region, functionName)
+		fnCfg, err := getConfig(ctx, cfg.region, functionName)
 		require.NoError(t, err)
-		tags, err := verifier.GetTags(ctx, cfg.region, functionArn)
+		tags, err := getTags(ctx, cfg.region, functionArn)
 		require.NoError(t, err)
-		require.NoError(t, verifier.VerifyInstrumented(fnCfg, tags, exp))
+		require.NoError(t, verifyInstrumented(fnCfg, tags, exp))
 	})
 
 	// 3. Trigger the workload and verify telemetry flows, asserting identity.
 	t.Run("trigger_and_telemetry_flows", func(t *testing.T) {
 		invokeLambda(t, ctx, cfg.region, serviceName)
 
-		client := telemetry.NewClient(cfg.site, cfg.ddAPIKey, cfg.ddAppKey)
+		client := e2eshared.NewTelemetryClient(cfg.site, cfg.ddAPIKey, cfg.ddAppKey)
 
 		// Spans and logs are polled sequentially; give each its own full budget so a
 		// slow spans poll can't starve the logs poll of time.
 		spanCtx, cancelSpan := context.WithTimeout(ctx, 6*time.Minute)
 		defer cancelSpan()
-		span, err := client.WaitForMatching(spanCtx, "spans", client.SearchSpans, telemetry.SpanQuery(id), id)
+		span, err := client.WaitForMatching(spanCtx, "spans", client.SearchSpans, e2eshared.SpanQuery(id), id)
 		require.NoError(t, err, "spans carrying the workload identity should appear")
 		t.Logf("span identity verified: %+v", span.Attrs)
 
 		logCtx, cancelLog := context.WithTimeout(ctx, 6*time.Minute)
 		defer cancelLog()
-		log, err := client.WaitForMatching(logCtx, "logs", client.SearchLogs, telemetry.LogQuery(id), id)
+		log, err := client.WaitForMatching(logCtx, "logs", client.SearchLogs, e2eshared.LogQuery(id), id)
 		require.NoError(t, err, "logs carrying the workload identity should appear")
 		t.Logf("log identity verified: %+v", log.Attrs)
 	})
@@ -212,11 +198,11 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 		functionName := terraform.Output(t, opts, "function_name")
 		functionArn := terraform.Output(t, opts, "function_arn")
 
-		fnCfg, err := verifier.GetConfig(ctx, cfg.region, functionName)
+		fnCfg, err := getConfig(ctx, cfg.region, functionName)
 		require.NoError(t, err)
-		tags, err := verifier.GetTags(ctx, cfg.region, functionArn)
+		tags, err := getTags(ctx, cfg.region, functionArn)
 		require.NoError(t, err)
-		require.NoError(t, verifier.VerifyUninstrumented(fnCfg, tags))
+		require.NoError(t, verifyUninstrumented(fnCfg, tags))
 	})
 }
 
@@ -230,7 +216,7 @@ func invokeLambda(t *testing.T, ctx context.Context, region, functionName string
 	_ = out.Close()
 
 	for i := 0; i < 3; i++ {
-		res, err := awscli.RunWithRetries(ctx, 4, 10*time.Second,
+		res, err := e2eshared.RunWithRetries(ctx, sharedCfg, 4, 10*time.Second,
 			"lambda", "invoke",
 			"--function-name", functionName,
 			"--region", region,
