@@ -4,18 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - 'main.tf'
-      - 'variables.tf'
-      - 'outputs.tf'
-      - 'versions.tf'
+      - '*.tf'
       - 'e2e/**'
       - '.github/workflows/e2e.yml'
   pull_request:
     paths:
-      - 'main.tf'
-      - 'variables.tf'
-      - 'outputs.tf'
-      - 'versions.tf'
+      - '*.tf'
       - 'e2e/**'
       - '.github/workflows/e2e.yml'
 
@@ -43,10 +37,7 @@ jobs:
         with:
           filters: |
             lambda:
-              - 'main.tf'
-              - 'variables.tf'
-              - 'outputs.tf'
-              - 'versions.tf'
+              - '*.tf'
               - 'e2e/**'
               - '.github/workflows/e2e.yml'
       - id: gate
