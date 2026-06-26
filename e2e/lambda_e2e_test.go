@@ -73,7 +73,7 @@ func loadConfig(t *testing.T) config {
 	t.Helper()
 
 	return config{
-		region:                envOr("AWS_REGION", envOr("AWS_DEFAULT_REGION", "us-east-1")),
+		region:                envOr("AWS_REGION", envOr("AWS_DEFAULT_REGION", "ap-northeast-3")),
 		secretArn:             mustEnv(t, "DD_API_KEY_SECRET_ARN"),
 		site:                  envOr("DATADOG_SITE", "datadoghq.com"),
 		ddAPIKey:              mustEnv(t, "DATADOG_API_KEY"),

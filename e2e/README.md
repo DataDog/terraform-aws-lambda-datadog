@@ -56,7 +56,7 @@ Environment variables:
 | `DD_API_KEY_SECRET_ARN`      |   yes    | ARN of the Secrets Manager secret the extension reads.             |
 | `DATADOG_API_KEY`            |   yes    | API key for querying spans/logs (injected by `dd-auth` below).     |
 | `DATADOG_APP_KEY`            |   yes    | App key for querying the Datadog API (injected by `dd-auth` below).|
-| `AWS_REGION`                 |    no    | Defaults to `us-east-1`.                                           |
+| `AWS_REGION`                 |    no    | Defaults to `ap-northeast-3`.                                      |
 | `DATADOG_SITE`               |    no    | Defaults to `datadoghq.com`.                                       |
 | `DD_NODE_LAYER_VERSION`      |    no    | Pin the asserted Node layer version (defaults to the module's).    |
 | `DD_EXTENSION_LAYER_VERSION` |    no    | Pin the asserted extension layer version (defaults to the module's).|
@@ -95,7 +95,7 @@ Required repo configuration (Settings → Secrets and variables → Actions):
 | Variable                       | Example                                                       |
 | ------------------------------ | ------------------------------------------------------------- |
 | `AWS_ROLE_ARN_E2E`             | `arn:aws:iam::<acct>:role/gha-terraform-aws-lambda-datadog-e2e` |
-| `AWS_REGION_E2E`               | `us-east-1`                                                   |
+| `AWS_REGION_E2E`               | `ap-northeast-3`                                              |
 | `DD_API_KEY_SECRET_ARN_E2E`    | ARN of the Secrets Manager secret the workload reads          |
 | `DATADOG_SITE_E2E`             | `datadoghq.com`                                               |
 | `DD_NODE_LAYER_VERSION_E2E`    | pinned Node layer version                                     |
