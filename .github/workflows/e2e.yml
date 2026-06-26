@@ -108,7 +108,7 @@ jobs:
 
       - name: Run e2e suite
         working-directory: e2e
-        run: go test -v -timeout 45m .
+        run: go test -v -timeout 45m ./...
         env:
           AWS_REGION: ${{ vars.AWS_REGION_E2E }}
           DD_API_KEY_SECRET_ARN: ${{ vars.DD_API_KEY_SECRET_ARN_E2E }}
