@@ -1,7 +1,0 @@
-{
-  "name": "one-e2e-workload",
-  "version": "1.0.0",
-  "description": "Minimal hello-world Lambda workload for the lambda-datadog e2e suite.",
-  "main": "index.js",
-  "license": "Apache-2.0"
-}
