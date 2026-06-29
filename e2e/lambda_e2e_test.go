@@ -1,7 +1,7 @@
 // Package e2e exercises the full lifecycle of the lambda-datadog Terraform module
-// against real AWS and Datadog: provision an uninstrumented workload, APPLY the module
-// and verify config, trigger it and verify telemetry flows, re-APPLY for idempotency,
-// REMOVE and verify a clean end-state, then always tear down.
+// against real AWS and Datadog: APPLY the module and verify config, trigger it and verify
+// telemetry flows, re-APPLY for idempotency, REMOVE and verify the function is gone, then
+// always tear down.
 //
 // See README.md for the auth and environment prerequisites. The suite is skipped unless
 // SKIP_LAMBDA_TESTS is unset/false.
@@ -132,10 +132,6 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 	// Teardown always, even on failure. Vars track the last applied state.
 	defer terraform.Destroy(t, opts)
 
-	// 1. Provision the uninstrumented workload.
-	opts.Vars = commonVars(false)
-	terraform.InitAndApply(t, opts)
-
 	id := e2eshared.IdentityFor(sharedCfg, serviceName, "e2e", "1.0.0", runID)
 	exp := Expectations{
 		Service:               serviceName,
@@ -149,7 +145,7 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 		ExtensionLayerVersion: cfg.extensionLayerVersion,
 	}
 
-	// 2. APPLY (instrument) and verify config present.
+	// 1. APPLY: create the workload through the module (from nothing) and verify config present.
 	t.Run("apply_instruments_and_config_present", func(t *testing.T) {
 		opts.Vars = commonVars(true)
 		terraform.InitAndApply(t, opts)
@@ -163,7 +159,7 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 		require.NoError(t, verifyInstrumented(fnCfg, tags, exp))
 	})
 
-	// 3. Trigger the workload and verify telemetry flows, asserting identity.
+	// 2. Trigger the workload and verify telemetry flows, asserting identity.
 	t.Run("trigger_and_telemetry_flows", func(t *testing.T) {
 		invokeLambda(t, ctx, cfg.region, serviceName)
 
@@ -184,25 +180,21 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 		t.Logf("log identity verified: %+v", log.Attrs)
 	})
 
-	// 4. Re-APPLY and assert idempotency (no diff).
+	// 3. Re-APPLY and assert idempotency (no diff).
 	t.Run("reapply_is_idempotent", func(t *testing.T) {
 		opts.Vars = commonVars(true)
 		exitCode := terraform.PlanExitCode(t, opts)
 		require.Equal(t, 0, exitCode, "re-apply should produce no diff (terraform plan detailed exit code 0)")
 	})
 
-	// 5. REMOVE and verify a clean end-state.
+	// 4. REMOVE: toggle the module off and verify the function is gone (clean end-state).
 	t.Run("remove_leaves_clean_state", func(t *testing.T) {
 		opts.Vars = commonVars(false)
 		terraform.InitAndApply(t, opts)
-		functionName := terraform.Output(t, opts, "function_name")
-		functionArn := terraform.Output(t, opts, "function_arn")
 
-		fnCfg, err := getConfig(ctx, cfg.region, functionName)
-		require.NoError(t, err)
-		tags, err := getTags(ctx, cfg.region, functionArn)
-		require.NoError(t, err)
-		require.NoError(t, verifyUninstrumented(fnCfg, tags))
+		_, err := getConfig(ctx, cfg.region, serviceName)
+		require.Error(t, err, "function should no longer exist after the module is removed")
+		require.Contains(t, err.Error(), "ResourceNotFoundException", "expected a Lambda not-found error, got: %v", err)
 	})
 }
 

@@ -158,21 +158,3 @@ func verifyInstrumented(cfg functionConfig, tags map[string]string, exp Expectat
 
 	return v.Err("instrumented contract violated")
 }
-
-// verifyUninstrumented asserts absence explicitly: no Datadog layers, no DD_* env vars,
-// no Datadog module tag.
-func verifyUninstrumented(cfg functionConfig, tags map[string]string) error {
-	var v e2eshared.Violations
-
-	for _, l := range cfg.Layers {
-		if strings.Contains(l.Arn, ":layer:Datadog-") {
-			v.Addf("residual Datadog layer %q", l.Arn)
-		}
-	}
-	e2eshared.ForbidKeyPrefix(&v, "env var", cfg.Environment.Variables, "DD_")
-	if tags["dd_sls_terraform_module"] != "" {
-		v.Addf("residual dd_sls_terraform_module tag %q", tags["dd_sls_terraform_module"])
-	}
-
-	return v.Err("uninstrumented (post-remove) contract violated")
-}

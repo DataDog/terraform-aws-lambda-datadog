@@ -11,18 +11,17 @@ A single Go + [Terratest](https://terratest.gruntwork.io/) test
 (`TestLambdaInstrumentationLifecycle`) walks the lifecycle, with the module as the
 mechanism that plugs into APPLY/REMOVE:
 
-1. **Provision** an uninstrumented workload -- a bare `aws_lambda_function` running the
-   hello-world handler, uniquely named `one-e2e-tflambda-lambda-<runid>`.
-2. **APPLY** -- redefine the same workload through the module and verify **config
+1. **APPLY** -- define the workload through the module (from nothing) and verify **config
    present**: pinned Datadog Node + extension layers, the redirected handler, the required
-   `DD_*` env wiring, and identifying tags.
-3. **Trigger** -- `lambda invoke`, then poll the Datadog API until **spans and logs**
+   `DD_*` env wiring, and identifying tags. The function is uniquely named
+   `one-e2e-tflambda-lambda-<runid>`.
+2. **Trigger** -- `lambda invoke`, then poll the Datadog API until **spans and logs**
    carrying the workload identity (`service`, `env`, `version`, run id) appear. Identity is
    asserted on the ingested telemetry, not mere existence.
-4. **Re-APPLY** -- assert idempotency via `terraform plan` (no diff).
-5. **REMOVE** -- revert to the bare workload and assert a **clean end-state**: no Datadog
-   layers, no `DD_*` env vars, no module tag.
-6. **Teardown** -- `terraform destroy`, always, even on failure.
+3. **Re-APPLY** -- assert idempotency via `terraform plan` (no diff).
+4. **REMOVE** -- toggle the module off and assert a **clean end-state**: the function no
+   longer exists.
+5. **Teardown** -- `terraform destroy`, always, even on failure.
 
 The workload runs one canonical runtime (`nodejs22.x`); per-runtime exhaustiveness lives
 upstream. The handler is duplicated from `serverless-self-monitoring`
