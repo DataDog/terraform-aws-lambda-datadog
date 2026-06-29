@@ -3,9 +3,8 @@ variable "region" {
   type        = string
 }
 
-# When true, the Lambda is defined through the lambda-datadog module (instrumented).
-# When false, the same workload is defined as a bare aws_lambda_function (uninstrumented).
-# The instrumentation mechanism under test plugs in exactly here, at APPLY/REMOVE.
+# When true, the workload is defined through the lambda-datadog module (APPLY). When
+# false, the module is removed and no function exists (REMOVE) -- the clean end-state.
 variable "instrumented" {
   description = "Whether to define the workload through the lambda-datadog module."
   type        = bool
