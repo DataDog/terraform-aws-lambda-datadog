@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -61,6 +62,16 @@ func (c *TelemetryClient) apiHost() string {
 	return "https://api." + c.Site
 }
 
+type httpStatusError struct {
+	path       string
+	statusCode int
+	body       string
+}
+
+func (e *httpStatusError) Error() string {
+	return fmt.Sprintf("datadog API %s returned %d: %s", e.path, e.statusCode, e.body)
+}
+
 func (c *TelemetryClient) post(ctx context.Context, path string, body any) ([]byte, error) {
 	payload, err := json.Marshal(body)
 	if err != nil {
@@ -81,7 +92,7 @@ func (c *TelemetryClient) post(ctx context.Context, path string, body any) ([]by
 	defer resp.Body.Close()
 	data, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode/100 != 2 {
-		return nil, fmt.Errorf("datadog API %s returned %d: %s", path, resp.StatusCode, string(data))
+		return nil, &httpStatusError{path: path, statusCode: resp.StatusCode, body: string(data)}
 	}
 
 	return data, nil
@@ -174,8 +185,9 @@ func (c *TelemetryClient) SearchLogs(ctx context.Context, query string) ([]Event
 // Identity is the set of tags expected on every ingested event for a workload. RunIDKey
 // is the run-id tag key (use cfg.runIDTagKey via IdentityFor, or set it directly).
 type Identity struct {
-	Service  string
-	Env      string
+	Service string
+	Env     string
+	// Version is optional; empty skips version matching.
 	Version  string
 	RunID    string
 	RunIDKey string
@@ -203,8 +215,20 @@ func (id Identity) runIDKey() string {
 func (id Identity) matches(e Event) bool {
 	return e.Has("service", id.Service) &&
 		e.Has("env", id.Env) &&
-		e.Has("version", id.Version) &&
+		(id.Version == "" || e.Has("version", id.Version)) &&
 		e.Has(id.runIDKey(), id.RunID)
+}
+
+func isRetryableTelemetryError(err error) bool {
+	var statusErr *httpStatusError
+	if !errors.As(err, &statusErr) {
+		return true
+	}
+
+	return statusErr.statusCode == http.StatusRequestTimeout ||
+		statusErr.statusCode == http.StatusConflict ||
+		statusErr.statusCode == http.StatusTooManyRequests ||
+		statusErr.statusCode >= 500
 }
 
 // WaitForMatching polls the given search function on a bounded budget until at least one
@@ -221,6 +245,9 @@ func (c *TelemetryClient) WaitForMatching(
 	for attempt := 1; attempt <= telemetryMaxAttempts; attempt++ {
 		events, err := search(ctx, query)
 		if err != nil {
+			if !isRetryableTelemetryError(err) {
+				return Event{}, fmt.Errorf("[%s] telemetry query failed: %w", label, err)
+			}
 			lastErr = err
 		} else {
 			for _, e := range events {
