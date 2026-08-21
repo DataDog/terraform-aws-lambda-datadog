@@ -6,7 +6,7 @@ locals {
     x86_64 = "",
     arm64  = "-ARM"
   }
-  runtime_base = regex("[a-z]+", var.runtime)
+  runtime_base = try(local.runtime_catalog[var.runtime].runtime_family, regex("[a-z]+", var.runtime))
   runtime_base_environment_variable_map = {
     dotnet = {
       AWS_LAMBDA_EXEC_WRAPPER = "/opt/datadog_wrapper"
@@ -38,41 +38,14 @@ locals {
     python = var.datadog_python_layer_version
     ruby   = var.datadog_ruby_layer_version
   }
-  runtime_layer_map = {
-    "dotnet6"    = "dd-trace-dotnet"
-    "dotnet7"    = "dd-trace-dotnet"
-    "dotnet8"    = "dd-trace-dotnet"
-    "dotnet10"   = "dd-trace-dotnet"
-    "java8.al2"  = "dd-trace-java"
-    "java11"     = "dd-trace-java"
-    "java17"     = "dd-trace-java"
-    "java21"     = "dd-trace-java"
-    "java25"     = "dd-trace-java"
-    "nodejs18.x" = "Datadog-Node18-x"
-    "nodejs20.x" = "Datadog-Node20-x"
-    "nodejs22.x" = "Datadog-Node22-x"
-    "nodejs24.x" = "Datadog-Node24-x"
-    "python3.8"  = "Datadog-Python38"
-    "python3.9"  = "Datadog-Python39"
-    "python3.10" = "Datadog-Python310"
-    "python3.11" = "Datadog-Python311"
-    "python3.12" = "Datadog-Python312"
-    "python3.13" = "Datadog-Python313"
-    "python3.14" = "Datadog-Python314"
-    "ruby3.2"    = "Datadog-Ruby3-2"
-    "ruby3.3"    = "Datadog-Ruby3-3"
-    "ruby3.4"    = "Datadog-Ruby3-4"
-    "ruby4.0"    = "Datadog-Ruby4-0"
-  }
 }
 
 locals {
   datadog_extension_layer_arn    = "${local.datadog_layer_name_base}:Datadog-Extension${local.datadog_extension_layer_suffix}:${var.datadog_extension_layer_version}"
   datadog_extension_layer_suffix = var.fips ? "${local.datadog_layer_suffix}-FIPS" : local.datadog_layer_suffix
 
-  datadog_lambda_layer_arn     = "${local.datadog_layer_name_base}:${local.datadog_lambda_layer_runtime}${local.datadog_lambda_layer_suffix}:${local.datadog_lambda_layer_version}"
-  datadog_lambda_layer_suffix  = contains(["java", "nodejs"], local.runtime_base) ? "" : local.datadog_layer_suffix # java and nodejs don't have separate layers for ARM
-  datadog_lambda_layer_runtime = lookup(local.runtime_layer_map, var.runtime, "")
+  datadog_lambda_layer_arn     = "${local.datadog_layer_name_base}:${local.datadog_lambda_layer_runtime}:${local.datadog_lambda_layer_version}"
+  datadog_lambda_layer_runtime = try(local.runtime_catalog[var.runtime].tracer_layer_name, null) == null ? "" : local.runtime_catalog[var.runtime].tracer_layer_names[var.architectures[0]]
   datadog_lambda_layer_version = lookup(local.runtime_base_layer_version_map, local.runtime_base, "")
 
   datadog_account_id      = (data.aws_partition.current.partition == "aws-us-gov") ? "002406178527" : "464622532012"
@@ -109,36 +82,7 @@ locals {
 
 check "runtime_support" {
   assert {
-    condition = contains(
-      [
-        "dotnet6",
-        "dotnet7",
-        "dotnet8",
-        "dotnet10",
-        "java8.al2",
-        "java11",
-        "java17",
-        "java21",
-        "java25",
-        "nodejs18.x",
-        "nodejs20.x",
-        "nodejs22.x",
-        "nodejs24.x",
-        "python3.8",
-        "python3.9",
-        "python3.10",
-        "python3.11",
-        "python3.12",
-        "python3.13",
-        "python3.14",
-        "provided.al2",
-        "provided.al2023",
-        "ruby3.2",
-        "ruby3.3",
-        "ruby3.4",
-        "ruby4.0",
-      ],
-    var.runtime)
+    condition     = contains(keys(local.runtime_catalog), var.runtime)
     error_message = "${var.runtime} Lambda runtime is not supported by the lambda-datadog Terraform module"
   }
 }

@@ -243,7 +243,7 @@ module "lambda-datadog" {
 
 #### Selecting the layer versions
 
-Use the following variables to select the versions of the Datadog Lambda layers to use. If no layer version is specified the latest version will be used.
+Use the following variables to select the versions of the Datadog Lambda layers to use. If you do not specify a layer version, the module uses the generated default in [`lambda_layer_catalog.tf`](lambda_layer_catalog.tf).
 
 | Variable | Description |
 | -------- | ----------- |
@@ -301,12 +301,12 @@ No modules.
 |------|-------------|----------------|---------|:--------:|
 | <a name="input_architectures"></a> [architectures](#input\_architectures) | Instruction set architecture for your Lambda function. Valid values are ["x86\_64"] and ["arm64"]. | `list(string)` | <pre>["x86_64"]</pre> | no |
 | <a name="input_code_signing_config_arn"></a> [code\_signing\_config\_arn](#input\_code\_signing\_config\_arn) | To enable code signing for this function, specify the ARN of a code-signing configuration. A code-signing configuration includes a set of signing profiles, which define the trusted publishers for this function. | `string`       | `null` | no |
-| <a name="input_datadog_extension_layer_version"></a> [datadog\_extension\_layer\_version](#input\_datadog\_extension\_layer\_version) | Version for the Datadog Extension Layer | `number`       | `90` | no |
-| <a name="input_datadog_dotnet_layer_version"></a> [datadog\_dotnet\_layer\_version](#input\_datadog\_dotnet\_layer\_version) | Version for the Datadog .NET Layer | `number`       | `23` | no |
-| <a name="input_datadog_java_layer_version"></a> [datadog\_java\_layer\_version](#input\_datadog\_java\_layer\_version) | Version for the Datadog Java Layer | `number`       | `24` | no |
-| <a name="input_datadog_node_layer_version"></a> [datadog\_node\_layer\_version](#input\_datadog\_node\_layer\_version) | Version for the Datadog Node Layer | `number`       | `132` | no |
-| <a name="input_datadog_python_layer_version"></a> [datadog\_python\_layer\_version](#input\_datadog\_python\_layer\_version) | Version for the Datadog Python Layer | `number`       | `120` | no |
-| <a name="input_datadog_ruby_layer_version"></a> [datadog\_ruby\_layer\_version](#input\_datadog\_ruby\_layer\_version) | Version for the Datadog Ruby Layer | `number`       | `28` | no |
+| <a name="input_datadog_extension_layer_version"></a> [datadog\_extension\_layer\_version](#input\_datadog\_extension\_layer\_version) | Version for the Datadog Extension Layer | `number`       | [See catalog](lambda_layer_catalog.tf) | no |
+| <a name="input_datadog_dotnet_layer_version"></a> [datadog\_dotnet\_layer\_version](#input\_datadog\_dotnet\_layer\_version) | Version for the Datadog .NET Layer | `number`       | [See catalog](lambda_layer_catalog.tf) | no |
+| <a name="input_datadog_java_layer_version"></a> [datadog\_java\_layer\_version](#input\_datadog\_java\_layer\_version) | Version for the Datadog Java Layer | `number`       | [See catalog](lambda_layer_catalog.tf) | no |
+| <a name="input_datadog_node_layer_version"></a> [datadog\_node\_layer\_version](#input\_datadog\_node\_layer\_version) | Version for the Datadog Node Layer | `number`       | [See catalog](lambda_layer_catalog.tf) | no |
+| <a name="input_datadog_python_layer_version"></a> [datadog\_python\_layer\_version](#input\_datadog\_python\_layer\_version) | Version for the Datadog Python Layer | `number`       | [See catalog](lambda_layer_catalog.tf) | no |
+| <a name="input_datadog_ruby_layer_version"></a> [datadog\_ruby\_layer\_version](#input\_datadog\_ruby\_layer\_version) | Version for the Datadog Ruby Layer | `number`       | [See catalog](lambda_layer_catalog.tf) | no |
 | <a name="input_dead_letter_config_target_arn"></a> [dead\_letter\_config\_target\_arn](#input\_dead\_letter\_config\_target\_arn) | ARN of an SNS topic or SQS queue to notify when an invocation fails. | `string`       | `null` | no |
 | <a name="input_description"></a> [description](#input\_description) | Description of what your Lambda Function does. | `string`       | `null` | no |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | Map of environment variables that are accessible from the function code during execution. | `map(string)`  | `{}` | no |
