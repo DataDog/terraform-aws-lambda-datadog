@@ -203,20 +203,14 @@ locals {
       }
     }
     "provided.al2" = {
-      runtime_family    = "provided"
-      tracer_layer_name = null
-      tracer_layer_names = {
-        x86_64 = ""
-        arm64  = ""
-      }
+      runtime_family     = "provided"
+      tracer_layer_name  = null
+      tracer_layer_names = null
     }
     "provided.al2023" = {
-      runtime_family    = "provided"
-      tracer_layer_name = null
-      tracer_layer_names = {
-        x86_64 = ""
-        arm64  = ""
-      }
+      runtime_family     = "provided"
+      tracer_layer_name  = null
+      tracer_layer_names = null
     }
     "ruby3.2" = {
       runtime_family    = "ruby"

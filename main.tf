@@ -44,8 +44,13 @@ locals {
   datadog_extension_layer_arn    = "${local.datadog_layer_name_base}:Datadog-Extension${local.datadog_extension_layer_suffix}:${var.datadog_extension_layer_version}"
   datadog_extension_layer_suffix = var.fips ? "${local.datadog_layer_suffix}-FIPS" : local.datadog_layer_suffix
 
-  datadog_lambda_layer_arn     = "${local.datadog_layer_name_base}:${local.datadog_lambda_layer_runtime}:${local.datadog_lambda_layer_version}"
-  datadog_lambda_layer_runtime = try(local.runtime_catalog[var.runtime].tracer_layer_name, null) == null ? "" : local.runtime_catalog[var.runtime].tracer_layer_names[var.architectures[0]]
+  datadog_lambda_layer_arn = "${local.datadog_layer_name_base}:${local.datadog_lambda_layer_name}:${local.datadog_lambda_layer_version}"
+  datadog_lambda_layer_name = local.datadog_lambda_layer_runtime == "" ? "" : (
+    local.runtime_catalog[var.runtime].tracer_layer_names.x86_64 == local.runtime_catalog[var.runtime].tracer_layer_names.arm64 ?
+    local.datadog_lambda_layer_runtime :
+    local.runtime_catalog[var.runtime].tracer_layer_names[var.architectures[0]]
+  )
+  datadog_lambda_layer_runtime = try(local.runtime_catalog[var.runtime].tracer_layer_name, null) == null ? "" : local.runtime_catalog[var.runtime].tracer_layer_name
   datadog_lambda_layer_version = lookup(local.runtime_base_layer_version_map, local.runtime_base, "")
 
   datadog_account_id      = (data.aws_partition.current.partition == "aws-us-gov") ? "002406178527" : "464622532012"
