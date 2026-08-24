@@ -50,14 +50,6 @@ locals {
         arm64  = "dd-trace-dotnet-ARM"
       }
     }
-    "dotnet7" = {
-      runtime_family    = "dotnet"
-      tracer_layer_name = "dd-trace-dotnet"
-      tracer_layer_names = {
-        x86_64 = "dd-trace-dotnet"
-        arm64  = "dd-trace-dotnet-ARM"
-      }
-    }
     "dotnet8" = {
       runtime_family    = "dotnet"
       tracer_layer_name = "dd-trace-dotnet"
