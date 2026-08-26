@@ -37,7 +37,7 @@ variable "datadog_python_layer_version" {
 variable "datadog_ruby_layer_version" {
   description = "Version for the Datadog Ruby Layer"
   type        = number
-  default     = 28
+  default     = 30
 }
 
 locals {
@@ -64,6 +64,14 @@ locals {
       tracer_layer_names = {
         x86_64 = "dd-trace-dotnet"
         arm64  = "dd-trace-dotnet-ARM"
+      }
+    }
+    "java8" = {
+      runtime_family    = "java"
+      tracer_layer_name = "dd-trace-java"
+      tracer_layer_names = {
+        x86_64 = "dd-trace-java"
+        arm64  = "dd-trace-java"
       }
     }
     "java8.al2" = {
