@@ -25,7 +25,7 @@ variable "datadog_java_layer_version" {
 variable "datadog_node_layer_version" {
   description = "Version for the Datadog Node Layer"
   type        = number
-  default     = 142
+  default     = 143
 }
 
 variable "datadog_python_layer_version" {
@@ -144,6 +144,14 @@ locals {
       tracer_layer_names = {
         x86_64 = "Datadog-Node24-x"
         arm64  = "Datadog-Node24-x"
+      }
+    }
+    "nodejs26.x" = {
+      runtime_family    = "nodejs"
+      tracer_layer_name = "Datadog-Node26-x"
+      tracer_layer_names = {
+        x86_64 = "Datadog-Node26-x"
+        arm64  = "Datadog-Node26-x"
       }
     }
     "python3.8" = {
