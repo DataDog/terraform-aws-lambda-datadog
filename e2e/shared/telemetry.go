@@ -108,6 +108,8 @@ type searchResponse struct {
 			Tags    []string `json:"tags"`
 			// Logs nest their structured attributes one level deeper.
 			Attributes map[string]json.RawMessage `json:"attributes"`
+			// Spans carry their tags, including version, under custom.
+			Custom map[string]json.RawMessage `json:"custom"`
 		} `json:"attributes"`
 	} `json:"data"`
 }
@@ -119,7 +121,9 @@ func parseEvents(data []byte) ([]Event, error) {
 	}
 	events := make([]Event, 0, len(resp.Data))
 	for _, d := range resp.Data {
+		// Span custom tags fill gaps only; top-level and log attributes take precedence.
 		attrs := map[string]string{}
+		addStrings(attrs, d.Attributes.Custom)
 		if d.Attributes.Service != "" {
 			attrs["service"] = d.Attributes.Service
 		}
@@ -129,16 +133,21 @@ func parseEvents(data []byte) ([]Event, error) {
 		if d.Attributes.Version != "" {
 			attrs["version"] = d.Attributes.Version
 		}
-		for k, raw := range d.Attributes.Attributes {
-			var s string
-			if json.Unmarshal(raw, &s) == nil {
-				attrs[k] = s
-			}
-		}
+		addStrings(attrs, d.Attributes.Attributes)
 		events = append(events, Event{Attrs: attrs, Tags: d.Attributes.Tags})
 	}
 
 	return events, nil
+}
+
+// addStrings copies the string-valued entries of raw into attrs.
+func addStrings(attrs map[string]string, raw map[string]json.RawMessage) {
+	for k, v := range raw {
+		var s string
+		if json.Unmarshal(v, &s) == nil {
+			attrs[k] = s
+		}
+	}
 }
 
 func (c *TelemetryClient) window() (string, string) {
