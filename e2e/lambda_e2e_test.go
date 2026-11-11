@@ -3,17 +3,18 @@
 // telemetry flows, re-APPLY for idempotency, REMOVE and verify the function is gone, then
 // always tear down.
 //
-// See README.md for the auth and environment prerequisites. The suite is skipped unless
-// SKIP_LAMBDA_TESTS is unset/false.
+// See README.md for the auth and environment prerequisites.
 package e2e
 
 import (
 	"context"
 	"os"
+	"path/filepath"
 	"strconv"
 	"testing"
 	"time"
 
+	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/require"
 
@@ -39,6 +40,7 @@ type config struct {
 	ddAppKey              string
 	nodeLayerVersion      int
 	extensionLayerVersion int
+	runID                 string
 }
 
 func envOr(key, fallback string) string {
@@ -75,23 +77,20 @@ func loadConfig(t *testing.T) config {
 	return config{
 		region:                envOr("AWS_REGION", envOr("AWS_DEFAULT_REGION", "ap-northeast-3")),
 		secretArn:             mustEnv(t, "DD_API_KEY_SECRET_ARN"),
-		site:                  envOr("DATADOG_SITE", "datadoghq.com"),
-		ddAPIKey:              mustEnv(t, "DATADOG_API_KEY"),
-		ddAppKey:              mustEnv(t, "DATADOG_APP_KEY"),
+		site:                  envOr("DD_SITE", "datadoghq.com"),
+		ddAPIKey:              mustEnv(t, "DD_API_KEY"),
+		ddAppKey:              mustEnv(t, "DD_APP_KEY"),
 		nodeLayerVersion:      intEnvOr(t, "DD_NODE_LAYER_VERSION", defaultNodeLayerVersion),
 		extensionLayerVersion: intEnvOr(t, "DD_EXTENSION_LAYER_VERSION", defaultExtensionLayerVersion),
+		runID:                 envOr("E2E_RUN_ID", e2eshared.NewRunID()),
 	}
 }
 
 func TestLambdaInstrumentationLifecycle(t *testing.T) {
-	if os.Getenv("SKIP_LAMBDA_TESTS") == "true" {
-		t.Skip("SKIP_LAMBDA_TESTS=true")
-	}
-
 	cfg := loadConfig(t)
 	ctx := context.Background()
 
-	runID := e2eshared.NewRunID()
+	runID := cfg.runID
 	// one-e2e-<tool>-<platform>-<runid>: identity + sweeper blast-radius guard.
 	serviceName := e2eshared.ResourceName(sharedCfg, runID)
 	createdTS := strconv.FormatInt(time.Now().Unix(), 10)
@@ -112,22 +111,26 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 		}
 	}
 
-	opts := &terraform.Options{
-		TerraformDir: "fixture",
+	// Run from a copy of the repository so local state never leaks between runs.
+	repoCopy, err := files.CopyTerraformFolderToTemp("..", "e2e-")
+	require.NoError(t, err)
+	t.Cleanup(func() { os.RemoveAll(repoCopy) })
+
+	opts := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
+		TerraformDir: filepath.Join(repoCopy, "e2e", "fixture"),
 		Vars:         commonVars(false),
-		// Retry the cloud, not the assertions: bounded retries on transient apply errors.
-		RetryableTerraformErrors: map[string]string{
-			".*Throttling.*":                  "AWS API throttling",
-			".*ThrottlingException.*":         "AWS API throttling",
-			".*RequestError.*":                "transient AWS request error",
-			".*ResourceConflictException.*":   "concurrent Lambda mutation",
-			".*operation error.*timeout.*":    "transient AWS timeout",
-			".*ServiceUnavailableException.*": "AWS service unavailable",
-		},
-		MaxRetries:         3,
-		TimeBetweenRetries: 10 * time.Second,
-		NoColor:            true,
+		NoColor:      true,
+	})
+	// Retry the cloud, not the assertions: bounded retries on transient AWS errors.
+	for pattern, message := range map[string]string{
+		"Throttling":                  "AWS API throttling",
+		"TooManyRequestsException":    "AWS API throttling",
+		"ResourceConflictException":   "concurrent Lambda mutation",
+		"ServiceUnavailableException": "AWS service unavailable",
+	} {
+		opts.RetryableTerraformErrors[pattern] = message
 	}
+	opts.TimeBetweenRetries = 10 * time.Second
 
 	// Teardown always, even on failure. Vars track the last applied state.
 	defer terraform.Destroy(t, opts)
@@ -184,6 +187,9 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 	t.Run("reapply_is_idempotent", func(t *testing.T) {
 		opts.Vars = commonVars(true)
 		exitCode := terraform.PlanExitCode(t, opts)
+		if exitCode != 0 {
+			t.Log(terraform.Plan(t, opts))
+		}
 		require.Equal(t, 0, exitCode, "re-apply should produce no diff (terraform plan detailed exit code 0)")
 	})
 

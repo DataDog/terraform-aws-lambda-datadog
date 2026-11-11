@@ -17,12 +17,11 @@ import (
 // sharedCfg parameterizes the shared helpers for this module: the AWS CLI, the AWS
 // transient-error patterns safe to retry, and the tool/platform naming.
 var sharedCfg = e2eshared.Config{
-	Tool:     "tflambda",
+	Tool:     "tf",
 	Platform: "lambda",
 	Command:  "aws",
 	RetryPatterns: []string{
 		"Throttling",
-		"ThrottlingException",
 		"TooManyRequestsException",
 		"RequestTimeout",
 		"ServiceUnavailable",

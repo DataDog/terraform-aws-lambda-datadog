@@ -14,7 +14,7 @@ mechanism that plugs into APPLY/REMOVE:
 1. **APPLY** -- define the workload through the module (from nothing) and verify **config
    present**: pinned Datadog Node + extension layers, the redirected handler, the required
    `DD_*` env wiring, and identifying tags. The function is uniquely named
-   `one-e2e-tflambda-lambda-<runid>`.
+   `one-e2e-tf-lambda-<runid>`.
 2. **Trigger** -- `lambda invoke`, then poll the Datadog API until **spans and logs**
    carrying the workload identity (`service`, `env`, `version`, run id) appear. Identity is
    asserted on the ingested telemetry, not mere existence.
@@ -30,7 +30,7 @@ layers and logs are auto-collected by the extension.
 
 ### Resource hygiene
 
-Every resource is named `one-e2e-tflambda-lambda-<runid>` and tagged
+Every resource is named `one-e2e-tf-lambda-<runid>` and tagged
 `one_e2e_created=<unix-ts>` at creation, so the shared cross-repo sweeper can identify and
 reap leaked resources without touching another team's.
 
@@ -41,7 +41,7 @@ Prerequisites:
 - **AWS auth** -- credentials for the serverless sandbox account in your environment.
   Prefix the command with `aws-vault`:
   ```
-  aws-vault exec sso-serverless-sandbox-account-admin -- go test -v -timeout 45m .
+  aws-vault exec sso-serverless-sandbox-account-admin -- go test -v -timeout 40m .
   ```
 - **Tooling** -- `terraform` (>= 1.5), `go` (see `go.mod`), the `aws` CLI, and `dd-auth` on
   `PATH`.
@@ -53,39 +53,35 @@ Environment variables:
 | Variable                     | Required | Description                                                        |
 | ---------------------------- | :------: | ------------------------------------------------------------------ |
 | `DD_API_KEY_SECRET_ARN`      |   yes    | ARN of the Secrets Manager secret the extension reads.             |
-| `DATADOG_API_KEY`            |   yes    | API key for querying spans/logs (injected by `dd-auth` below).     |
-| `DATADOG_APP_KEY`            |   yes    | App key for querying the Datadog API (injected by `dd-auth` below).|
+| `DD_API_KEY`                 |   yes    | API key for querying spans/logs (injected by `dd-auth` below).     |
+| `DD_APP_KEY`                 |   yes    | App key for querying the Datadog API (injected by `dd-auth` below).|
 | `AWS_REGION`                 |    no    | Defaults to `ap-northeast-3`.                                      |
-| `DATADOG_SITE`               |    no    | Defaults to `datadoghq.com`.                                       |
+| `DD_SITE`                    |    no    | Defaults to `datadoghq.com`.                                       |
 | `DD_NODE_LAYER_VERSION`      |    no    | Pin the asserted Node layer version (defaults to the module's).    |
 | `DD_EXTENSION_LAYER_VERSION` |    no    | Pin the asserted extension layer version (defaults to the module's).|
-| `SKIP_LAMBDA_TESTS`          |    no    | Set to `true` to skip the suite.                                   |
+| `E2E_RUN_ID`                 |    no    | Run ID for resource names and telemetry. Defaults to a random ID.  |
 
 The suite needs Datadog API + App keys to query spans and logs. Use `dd-auth` to mint
 short-lived keys for the org instead of pasting long-lived ones; it injects `$DD_API_KEY`
-and `$DD_APP_KEY` into the wrapped command only. Because those vars exist only inside the
-`bash -c '...'` subprocess, the whole `go test` invocation runs inside it:
+and `$DD_APP_KEY` into the wrapped command only:
 
 ```
 cd e2e
-dd-auth --domain app.datadoghq.com -- bash -c '
-  export DATADOG_API_KEY="$DD_API_KEY" DATADOG_APP_KEY="$DD_APP_KEY"
+dd-auth --domain app.datadoghq.com -- \
   aws-vault exec sso-serverless-sandbox-account-admin -- \
-    env DD_API_KEY_SECRET_ARN=arn:aws:secretsmanager:us-east-1:...:secret:dd-api-key \
-    go test -v -timeout 45m .
-'
+  env DD_API_KEY_SECRET_ARN=arn:aws:secretsmanager:us-east-1:...:secret:dd-api-key \
+  go test -v -timeout 40m .
 ```
 
 ## In CI
 
-`.github/workflows/e2e.yml` runs the suite behind a path filter (module sources + `e2e/`)
-and a `SKIP_LAMBDA_TESTS` flag, authenticating to AWS via OIDC federation
-(`id-token: write`, no long-lived keys).
+`.github/workflows/e2e.yml` runs the suite when a pull request or push to `main` changes
+the module sources, `e2e/`, or the workflow. It authenticates to AWS via OIDC federation
+(`id-token: write`, no long-lived keys), and an auth failure fails the job. Pull requests
+from forks skip the job because they can't use the OIDC role.
 
-The live cloud run is gated only on path relevance: every PR that touches the module or
-this suite runs the full lifecycle, and the AWS OIDC / dd-sts auth steps must then succeed
--- an auth or federation failure fails the job loudly rather than skipping green. When no
-relevant files change, the suite no-ops via `SKIP_LAMBDA_TESTS`.
+If the test times out or the run is cancelled, a final step deletes the run's function and
+IAM role by name. The serverless-ci sweeper reaps anything else.
 
 Required repo configuration (Settings → Secrets and variables → Actions):
 
@@ -110,4 +106,5 @@ Datadog keys live in this repo.
 
 The AWS OIDC role must trust GitHub's OIDC provider for this repo and allow managing
 Lambda functions + per-run IAM roles and writing the workload secret -- scoped to
-`one-e2e-tflambda-*` resources (full policy in `serverless-ci/e2e/iam-infra.md`).
+`one-e2e-tf-lambda-*` resources (full policy in
+`serverless-ci/e2e/terraform/aws/policies/terraform-aws-lambda-datadog-e2e-deploy.json`).
