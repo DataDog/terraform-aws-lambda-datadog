@@ -13,7 +13,7 @@ variable "instrumented" {
 # Unique workload identity. Set atomically at creation as the resource name prefix
 # (one-e2e-<tool>-<platform>-<runid>) and as the stable DD_SERVICE across phases.
 variable "service_name" {
-  description = "Unique workload name (one-e2e-tflambda-lambda-<runid>)."
+  description = "Unique workload name (one-e2e-tf-lambda-<runid>)."
   type        = string
 }
 
