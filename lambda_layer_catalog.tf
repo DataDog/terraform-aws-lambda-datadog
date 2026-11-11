@@ -25,7 +25,7 @@ variable "datadog_java_layer_version" {
 variable "datadog_node_layer_version" {
   description = "Version for the Datadog Node Layer"
   type        = number
-  default     = 143
+  default     = 144
 }
 
 variable "datadog_python_layer_version" {
