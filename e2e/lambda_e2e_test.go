@@ -1,16 +1,18 @@
 // Package e2e exercises the full lifecycle of the lambda-datadog Terraform module
 // against real AWS and Datadog: APPLY the module and verify config, trigger it and verify
 // telemetry flows, re-APPLY for idempotency, REMOVE and verify the function is gone, then
-// always tear down.
+// always tear down and verify nothing is left.
 //
 // See README.md for the auth and environment prerequisites.
 package e2e
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -133,7 +135,16 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 	opts.TimeBetweenRetries = 10 * time.Second
 
 	// Teardown always, even on failure. Vars track the last applied state.
-	defer terraform.Destroy(t, opts)
+	defer runPhase(t, "teardown", func() {
+		if _, err := terraform.DestroyE(t, opts); err != nil {
+			t.Errorf("terraform destroy failed: %v", err)
+			if err := deleteWorkload(ctx, cfg.region, serviceName); err != nil {
+				t.Errorf("fallback delete of %q failed: %v", serviceName, err)
+			}
+			return
+		}
+		require.NoError(t, verifyRemoved(ctx, cfg.region, serviceName), "destroy must remove the function and role")
+	})
 
 	id := e2eshared.IdentityFor(sharedCfg, serviceName, "e2e", "1.0.0", runID)
 	exp := Expectations{
@@ -148,60 +159,120 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 		ExtensionLayerVersion: cfg.extensionLayerVersion,
 	}
 
-	// 1. APPLY: create the workload through the module (from nothing) and verify config present.
-	t.Run("apply_instruments_and_config_present", func(t *testing.T) {
+	// APPLY: create the workload through the module (from nothing) and verify config present.
+	runPhase(t, "instrumentation deploy", func() {
 		opts.Vars = commonVars(true)
 		terraform.InitAndApply(t, opts)
-		functionName := terraform.Output(t, opts, "function_name")
-		functionArn := terraform.Output(t, opts, "function_arn")
+	})
 
-		fnCfg, err := getConfig(ctx, cfg.region, functionName)
+	runPhase(t, "config verification", func() {
+		fnCfg, err := getConfig(ctx, cfg.region, terraform.Output(t, opts, "function_name"))
 		require.NoError(t, err)
-		tags, err := getTags(ctx, cfg.region, functionArn)
+		tags, err := getTags(ctx, cfg.region, terraform.Output(t, opts, "function_arn"))
 		require.NoError(t, err)
 		require.NoError(t, verifyInstrumented(fnCfg, tags, exp))
 	})
 
-	// 2. Trigger the workload and verify telemetry flows, asserting identity.
-	t.Run("trigger_and_telemetry_flows", func(t *testing.T) {
-		invokeLambda(t, ctx, cfg.region, serviceName)
+	runPhase(t, "invoke", func() { invokeLambda(t, ctx, cfg.region, serviceName) })
 
-		client := e2eshared.NewTelemetryClient(cfg.site, cfg.ddAPIKey, cfg.ddAppKey)
+	runPhase(t, "telemetry wait", func() { checkTelemetryFlowing(t, ctx, cfg, id) })
 
-		// Spans and logs are polled sequentially; give each its own full budget so a
-		// slow spans poll can't starve the logs poll of time.
-		spanCtx, cancelSpan := context.WithTimeout(ctx, 6*time.Minute)
-		defer cancelSpan()
-		span, err := client.WaitForMatching(spanCtx, "spans", client.SearchSpans, e2eshared.SpanQuery(id), id)
-		require.NoError(t, err, "spans carrying the workload identity should appear")
-		t.Logf("span identity verified: %+v", span.Attrs)
-
-		logCtx, cancelLog := context.WithTimeout(ctx, 6*time.Minute)
-		defer cancelLog()
-		log, err := client.WaitForMatching(logCtx, "logs", client.SearchLogs, e2eshared.LogQuery(id), id)
-		require.NoError(t, err, "logs carrying the workload identity should appear")
-		t.Logf("log identity verified: %+v", log.Attrs)
-	})
-
-	// 3. Re-APPLY and assert idempotency (no diff).
-	t.Run("reapply_is_idempotent", func(t *testing.T) {
-		opts.Vars = commonVars(true)
+	runPhase(t, "idempotency check", func() {
 		exitCode := terraform.PlanExitCode(t, opts)
 		if exitCode != 0 {
 			t.Log(terraform.Plan(t, opts))
 		}
-		require.Equal(t, 0, exitCode, "re-apply should produce no diff (terraform plan detailed exit code 0)")
+		require.Equal(t, 0, exitCode, "re-apply must be a no-op")
 	})
 
-	// 4. REMOVE: toggle the module off and verify the function is gone (clean end-state).
-	t.Run("remove_leaves_clean_state", func(t *testing.T) {
+	// REMOVE: toggle the module off and verify the function is gone (clean end-state).
+	runPhase(t, "remove", func() {
 		opts.Vars = commonVars(false)
 		terraform.InitAndApply(t, opts)
 
 		_, err := getConfig(ctx, cfg.region, serviceName)
-		require.Error(t, err, "function should no longer exist after the module is removed")
-		require.Contains(t, err.Error(), "ResourceNotFoundException", "expected a Lambda not-found error, got: %v", err)
+		require.ErrorContains(t, err, "ResourceNotFoundException", "function should no longer exist after the module is removed")
 	})
+}
+
+// checkTelemetryFlowing waits in parallel for spans and logs that carry the run's service,
+// env, version, and run ID.
+func checkTelemetryFlowing(t *testing.T, ctx context.Context, cfg config, id e2eshared.Identity) {
+	t.Helper()
+	client := e2eshared.NewTelemetryClient(cfg.site, cfg.ddAPIKey, cfg.ddAppKey)
+
+	type search struct {
+		label string
+		run   func(context.Context, string) ([]e2eshared.Event, error)
+		query string
+	}
+	searches := []search{
+		{"spans", client.SearchSpans, e2eshared.SpanQuery(id)},
+		{"logs", client.SearchLogs, e2eshared.LogQuery(id)},
+	}
+	errs := make(chan error, len(searches))
+	for _, s := range searches {
+		go func() {
+			_, err := client.WaitForMatching(ctx, s.label, s.run, s.query, id)
+			if err != nil {
+				err = fmt.Errorf("%w; sample: %s", err, sampleEvent(ctx, s.run, s.query))
+			}
+			errs <- err
+		}()
+	}
+
+	var failures []string
+	for range searches {
+		if err := <-errs; err != nil {
+			failures = append(failures, err.Error())
+		}
+	}
+	require.Empty(t, failures, "telemetry did not flow: %s", strings.Join(failures, "; "))
+}
+
+// sampleEvent describes one event matching query, so identity mismatches show what
+// Datadog actually received.
+func sampleEvent(ctx context.Context, search func(context.Context, string) ([]e2eshared.Event, error), query string) string {
+	events, err := search(ctx, query)
+	switch {
+	case err != nil:
+		return err.Error()
+	case len(events) == 0:
+		return "none"
+	default:
+		return fmt.Sprintf("attrs=%v tags=%v", events[0].Attrs, events[0].Tags)
+	}
+}
+
+// runPhase logs a phase's start, a heartbeat every 30 seconds, and its end, so long
+// waits stay visible in CI.
+func runPhase(t *testing.T, name string, run func()) {
+	t.Helper()
+	started := time.Now()
+	t.Logf("START: %s", name)
+
+	stop := make(chan struct{})
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		ticker := time.NewTicker(30 * time.Second)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				t.Logf("RUNNING: %s (%s elapsed)", name, time.Since(started).Round(time.Second))
+			case <-stop:
+				return
+			}
+		}
+	}()
+	defer func() {
+		close(stop)
+		<-done
+		t.Logf("DONE: %s (%s)", name, time.Since(started).Round(time.Second))
+	}()
+
+	run()
 }
 
 // invokeLambda triggers the workload a few times so a trace and log are produced, with

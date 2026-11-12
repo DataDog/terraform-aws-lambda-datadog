@@ -7,6 +7,7 @@ package e2e
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -90,6 +91,52 @@ func getTags(ctx context.Context, region, functionArn string) (map[string]string
 	}
 
 	return out.Tags, nil
+}
+
+// deleteWorkload deletes the run's function and IAM role directly, for when terraform
+// destroy fails.
+func deleteWorkload(ctx context.Context, region, name string) error {
+	role := name + "-role"
+	steps := [][]string{
+		{"lambda", "delete-function", "--function-name", name, "--region", region},
+		{"iam", "detach-role-policy", "--role-name", role,
+			"--policy-arn", "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"},
+		{"iam", "delete-role-policy", "--role-name", role, "--policy-name", "read-dd-api-key-secret"},
+		{"iam", "delete-role", "--role-name", role},
+	}
+	var errs []error
+	for _, args := range steps {
+		if _, err := e2eshared.RunWithRetries(ctx, sharedCfg, 3, 5*time.Second, args...); err != nil &&
+			!strings.Contains(err.Error(), "ResourceNotFoundException") && !strings.Contains(err.Error(), "NoSuchEntity") {
+			errs = append(errs, err)
+		}
+	}
+
+	return errors.Join(errs...)
+}
+
+// verifyRemoved asserts the run's function and IAM role no longer exist.
+func verifyRemoved(ctx context.Context, region, name string) error {
+	var v e2eshared.Violations
+	role := name + "-role"
+	_, fnErr := getConfig(ctx, region, name)
+	_, roleErr := e2eshared.RunWithRetries(ctx, sharedCfg, 3, 5*time.Second, "iam", "get-role", "--role-name", role)
+	for _, c := range []struct {
+		resource, notFound string
+		err                error
+	}{
+		{"function " + name, "ResourceNotFoundException", fnErr},
+		{"IAM role " + role, "NoSuchEntity", roleErr},
+	} {
+		switch {
+		case c.err == nil:
+			v.Addf("%s still exists", c.resource)
+		case !strings.Contains(c.err.Error(), c.notFound):
+			v.Addf("could not check %s: %v", c.resource, c.err)
+		}
+	}
+
+	return v.Err("workload not removed")
 }
 
 func (c functionConfig) hasLayer(substr string) bool {

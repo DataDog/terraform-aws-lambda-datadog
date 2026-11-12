@@ -15,13 +15,14 @@ mechanism that plugs into APPLY/REMOVE:
    present**: pinned Datadog Node + extension layers, the redirected handler, the required
    `DD_*` env wiring, and identifying tags. The function is uniquely named
    `one-e2e-tf-lambda-<runid>`.
-2. **Trigger** -- `lambda invoke`, then poll the Datadog API until **spans and logs**
+2. **Trigger** -- `lambda invoke`, then poll the Datadog API in parallel until **spans and logs**
    carrying the workload identity (`service`, `env`, `version`, run id) appear. Identity is
    asserted on the ingested telemetry, not mere existence.
 3. **Re-APPLY** -- assert idempotency via `terraform plan` (no diff).
 4. **REMOVE** -- toggle the module off and assert a **clean end-state**: the function no
    longer exists.
-5. **Teardown** -- `terraform destroy`, always, even on failure.
+5. **Teardown** -- `terraform destroy`, always, even on failure, then assert the function
+   and IAM role are gone. If destroy fails, the test deletes them directly.
 
 The workload runs one canonical runtime (`nodejs22.x`); per-runtime exhaustiveness lives
 upstream. The handler is duplicated from `serverless-self-monitoring`
