@@ -67,9 +67,6 @@ module "instrumented" {
   runtime          = var.runtime
   memory_size      = 256
 
-  datadog_extension_layer_version = var.datadog_extension_layer_version
-  datadog_node_layer_version      = var.datadog_node_layer_version
-
   environment_variables = {
     DD_API_KEY_SECRET_ARN = var.datadog_api_key_secret_arn
     DD_ENV                = var.dd_env
