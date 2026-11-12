@@ -86,9 +86,6 @@ jobs:
           DD_SITE: ${{ vars.DATADOG_SITE_E2E || 'datadoghq.com' }}
           DD_API_KEY: ${{ steps.dd-sts.outputs.api_key }}
           DD_APP_KEY: ${{ steps.dd-sts.outputs.app_key }}
-          # Pin artifacts so a telemetry failure blames the module, not upstream.
-          DD_NODE_LAYER_VERSION: ${{ vars.DD_NODE_LAYER_VERSION_E2E }}
-          DD_EXTENSION_LAYER_VERSION: ${{ vars.DD_EXTENSION_LAYER_VERSION_E2E }}
 
       # Catches resources left behind when the test times out or the run is cancelled.
       - name: Delete leftover resources

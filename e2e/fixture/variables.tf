@@ -56,14 +56,3 @@ variable "runtime" {
   type        = string
   default     = "nodejs22.x"
 }
-
-# Pinned so a telemetry failure blames the module wiring, not a layer/extension drift.
-variable "datadog_extension_layer_version" {
-  description = "Pinned Datadog extension layer version."
-  type        = number
-}
-
-variable "datadog_node_layer_version" {
-  description = "Pinned Datadog Node layer version."
-  type        = number
-}

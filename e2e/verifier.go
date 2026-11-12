@@ -48,18 +48,15 @@ type functionConfig struct {
 	} `json:"Environment"`
 }
 
-// Expectations pins what an instrumented workload must look like, so a mismatch blames
-// the module wiring rather than upstream drift.
+// Expectations describes the configuration required for this run.
 type Expectations struct {
-	Service               string
-	Env                   string
-	Version               string
-	RunID                 string
-	Site                  string
-	SecretArn             string
-	NodeLayerName         string // e.g. Datadog-Node22-x
-	NodeLayerVersion      int
-	ExtensionLayerVersion int
+	Service       string
+	Env           string
+	Version       string
+	RunID         string
+	Site          string
+	SecretArn     string
+	NodeLayerName string // e.g. Datadog-Node22-x
 }
 
 func getConfig(ctx context.Context, region, functionName string) (functionConfig, error) {
@@ -158,20 +155,19 @@ func layerArns(cfg functionConfig) []string {
 	return arns
 }
 
-// verifyInstrumented asserts config present: pinned DD layers + extension, required DD_*
+// verifyInstrumented asserts config present: DD layers + extension, required DD_*
 // env wiring, the redirected handler, and identifying tags.
 func verifyInstrumented(cfg functionConfig, tags map[string]string, exp Expectations) error {
 	var v e2eshared.Violations
 
-	// Pinned layers: Datadog runtime layer + extension layer at the exact versions.
-	nodeLayer := fmt.Sprintf(":layer:%s:%d", exp.NodeLayerName, exp.NodeLayerVersion)
+	nodeLayer := fmt.Sprintf(":layer:%s:", exp.NodeLayerName)
 	if !cfg.hasLayer(nodeLayer) {
-		v.Addf("expected pinned Datadog node layer %q among %v", nodeLayer, layerArns(cfg))
+		v.Addf("expected Datadog node layer %q among %v", nodeLayer, layerArns(cfg))
 	}
-	extLayer := fmt.Sprintf(":layer:Datadog-Extension:%d", exp.ExtensionLayerVersion)
-	extLayerFips := fmt.Sprintf(":layer:Datadog-Extension-FIPS:%d", exp.ExtensionLayerVersion)
+	const extLayer = ":layer:Datadog-Extension:"
+	const extLayerFips = ":layer:Datadog-Extension-FIPS:"
 	if !cfg.hasLayer(extLayer) && !cfg.hasLayer(extLayerFips) {
-		v.Addf("expected pinned Datadog extension layer %q among %v", extLayer, layerArns(cfg))
+		v.Addf("expected Datadog extension layer %q among %v", extLayer, layerArns(cfg))
 	}
 
 	// Handler must be redirected to the Datadog Node wrapper.

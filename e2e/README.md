@@ -12,8 +12,8 @@ A single Go + [Terratest](https://terratest.gruntwork.io/) test
 mechanism that plugs into APPLY/REMOVE:
 
 1. **APPLY** -- define the workload through the module (from nothing) and verify **config
-   present**: pinned Datadog Node + extension layers, the redirected handler, the required
-   `DD_*` env wiring, and identifying tags. The function is uniquely named
+   present**: the module's default Datadog Node + extension layers, the redirected handler,
+   the required `DD_*` env wiring, and identifying tags. The function is uniquely named
    `one-e2e-tf-lambda-<runid>`.
 2. **Trigger** -- `lambda invoke`, then poll the Datadog API in parallel until **spans and logs**
    carrying the workload identity (`service`, `env`, `version`, run id) appear. Identity is
@@ -58,8 +58,6 @@ Environment variables:
 | `DD_APP_KEY`                 |   yes    | App key for querying the Datadog API (injected by `dd-auth` below).|
 | `AWS_REGION`                 |    no    | Defaults to `ap-northeast-3`.                                      |
 | `DD_SITE`                    |    no    | Defaults to `datadoghq.com`.                                       |
-| `DD_NODE_LAYER_VERSION`      |    no    | Pin the asserted Node layer version (defaults to the module's).    |
-| `DD_EXTENSION_LAYER_VERSION` |    no    | Pin the asserted extension layer version (defaults to the module's).|
 | `E2E_RUN_ID`                 |    no    | Run ID for resource names and telemetry. Defaults to a random ID.  |
 
 The suite needs Datadog API + App keys to query spans and logs. Use `dd-auth` to mint
@@ -94,8 +92,6 @@ Required repo configuration (Settings → Secrets and variables → Actions):
 | `AWS_REGION_E2E`               | `ap-northeast-3`                                              |
 | `DD_API_KEY_SECRET_ARN_E2E`    | ARN of the Secrets Manager secret the workload reads          |
 | `DATADOG_SITE_E2E`             | `datadoghq.com`                                               |
-| `DD_NODE_LAYER_VERSION_E2E`    | pinned Node layer version                                     |
-| `DD_EXTENSION_LAYER_VERSION_E2E` | pinned extension layer version                              |
 
 **Datadog auth (dd-sts).** The workflow obtains short-lived Datadog API + App keys at
 runtime via [`DataDog/dd-sts-action`](https://github.com/DataDog/dd-sts-action), governed

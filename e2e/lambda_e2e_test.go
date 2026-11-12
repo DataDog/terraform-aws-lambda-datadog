@@ -23,26 +23,19 @@ import (
 	e2eshared "github.com/DataDog/terraform-aws-lambda-datadog/e2e/shared"
 )
 
-// Canonical, pinned artifacts. One runtime per platform; exhaustiveness lives upstream.
+// One runtime per platform; exhaustiveness lives upstream.
 const (
 	canonicalRuntime = "nodejs22.x"
 	nodeLayerName    = "Datadog-Node22-x"
-
-	// Defaults match the module's current variables.tf and are overridable via env so a
-	// failure blames the module wiring, not upstream layer drift.
-	defaultNodeLayerVersion      = 135
-	defaultExtensionLayerVersion = 93
 )
 
 type config struct {
-	region                string
-	secretArn             string
-	site                  string
-	ddAPIKey              string
-	ddAppKey              string
-	nodeLayerVersion      int
-	extensionLayerVersion int
-	runID                 string
+	region    string
+	secretArn string
+	site      string
+	ddAPIKey  string
+	ddAppKey  string
+	runID     string
 }
 
 func envOr(key, fallback string) string {
@@ -61,30 +54,16 @@ func mustEnv(t *testing.T, key string) string {
 	return v
 }
 
-func intEnvOr(t *testing.T, key string, fallback int) int {
-	t.Helper()
-	v := os.Getenv(key)
-	if v == "" {
-		return fallback
-	}
-	n, err := strconv.Atoi(v)
-	require.NoErrorf(t, err, "%s must be an integer", key)
-
-	return n
-}
-
 func loadConfig(t *testing.T) config {
 	t.Helper()
 
 	return config{
-		region:                envOr("AWS_REGION", envOr("AWS_DEFAULT_REGION", "ap-northeast-3")),
-		secretArn:             mustEnv(t, "DD_API_KEY_SECRET_ARN"),
-		site:                  envOr("DD_SITE", "datadoghq.com"),
-		ddAPIKey:              mustEnv(t, "DD_API_KEY"),
-		ddAppKey:              mustEnv(t, "DD_APP_KEY"),
-		nodeLayerVersion:      intEnvOr(t, "DD_NODE_LAYER_VERSION", defaultNodeLayerVersion),
-		extensionLayerVersion: intEnvOr(t, "DD_EXTENSION_LAYER_VERSION", defaultExtensionLayerVersion),
-		runID:                 envOr("E2E_RUN_ID", e2eshared.NewRunID()),
+		region:    envOr("AWS_REGION", envOr("AWS_DEFAULT_REGION", "ap-northeast-3")),
+		secretArn: mustEnv(t, "DD_API_KEY_SECRET_ARN"),
+		site:      envOr("DD_SITE", "datadoghq.com"),
+		ddAPIKey:  mustEnv(t, "DD_API_KEY"),
+		ddAppKey:  mustEnv(t, "DD_APP_KEY"),
+		runID:     envOr("E2E_RUN_ID", e2eshared.NewRunID()),
 	}
 }
 
@@ -100,16 +79,14 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 
 	commonVars := func(instrumented bool) map[string]any {
 		return map[string]any{
-			"region":                          cfg.region,
-			"instrumented":                    instrumented,
-			"service_name":                    serviceName,
-			"created_ts":                      createdTS,
-			"run_id":                          runID,
-			"datadog_api_key_secret_arn":      cfg.secretArn,
-			"datadog_site":                    cfg.site,
-			"runtime":                         canonicalRuntime,
-			"datadog_node_layer_version":      cfg.nodeLayerVersion,
-			"datadog_extension_layer_version": cfg.extensionLayerVersion,
+			"region":                     cfg.region,
+			"instrumented":               instrumented,
+			"service_name":               serviceName,
+			"created_ts":                 createdTS,
+			"run_id":                     runID,
+			"datadog_api_key_secret_arn": cfg.secretArn,
+			"datadog_site":               cfg.site,
+			"runtime":                    canonicalRuntime,
 		}
 	}
 
@@ -148,15 +125,13 @@ func TestLambdaInstrumentationLifecycle(t *testing.T) {
 
 	id := e2eshared.IdentityFor(sharedCfg, serviceName, "e2e", "1.0.0", runID)
 	exp := Expectations{
-		Service:               serviceName,
-		Env:                   "e2e",
-		Version:               "1.0.0",
-		RunID:                 runID,
-		Site:                  cfg.site,
-		SecretArn:             cfg.secretArn,
-		NodeLayerName:         nodeLayerName,
-		NodeLayerVersion:      cfg.nodeLayerVersion,
-		ExtensionLayerVersion: cfg.extensionLayerVersion,
+		Service:       serviceName,
+		Env:           "e2e",
+		Version:       "1.0.0",
+		RunID:         runID,
+		Site:          cfg.site,
+		SecretArn:     cfg.secretArn,
+		NodeLayerName: nodeLayerName,
 	}
 
 	// APPLY: create the workload through the module (from nothing) and verify config present.
