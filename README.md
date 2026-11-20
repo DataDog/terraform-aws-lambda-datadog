@@ -198,7 +198,7 @@ module "lambda-datadog" {
 
 #### Memory overhead
 
-The Datadog Lambda Extension and tracer layers add memory overhead to your function (about 69 MB for Python). Functions with less than 256 MB of memory can run out of memory or time out after instrumentation. When `memory_size` is below 256 MB (or unset, which defaults to 128 MB), the module emits a `lambda_low_memory` warning during `terraform plan` and `terraform apply` through a Terraform `check` block. The warning does not fail the run, and the function is still created and instrumented. Increase `memory_size` to at least 256, or set `suppress_low_memory_warning = true` to silence the warning.
+The Datadog Lambda Extension and tracer layers add memory overhead to your function (about 70 MB for Python). Functions with less than 256 MB of memory can run out of memory or time out after instrumentation. When `memory_size` is below 256 MB (or unset, which defaults to 128 MB), the module emits a `lambda_low_memory` warning during `terraform plan` and `terraform apply` through a Terraform `check` block. The warning does not fail the run, and the function is still created and instrumented. Increase `memory_size` to at least 256, or set `suppress_low_memory_warning = true` to silence the warning.
 
 #### aws_lambda_function resource
 ```
