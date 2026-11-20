@@ -187,6 +187,13 @@ variable "source_code_hash" {
   default     = null
 }
 
+variable "suppress_low_memory_warning" {
+  description = "Set to true to silence the warning emitted when the function's memory_size (128 MB if unset) is below 256 MB. The Datadog Lambda Extension and tracer add memory overhead that can cause out-of-memory errors and timeouts on low-memory functions."
+  type        = bool
+  default     = false
+  nullable    = false
+}
+
 variable "tags" {
   description = "Map of tags to assign to the object."
   type        = map(string)

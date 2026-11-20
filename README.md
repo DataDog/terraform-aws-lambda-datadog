@@ -196,6 +196,10 @@ module "lambda-datadog" {
 - Arguments defined as blocks in the `aws_lambda_function` resource are redefined as variables with their nested arguments.
   * For example, in `aws_lambda_function`, `environment` is defined as a block with a `variables` argument. In this Terraform module, the value for the `environment_variables` is passed to the `environment.variables` argument in `aws_lambda_function`. See [variables.tf](variables.tf) for a complete list of variables in this module.
 
+#### Memory overhead
+
+The Datadog Lambda Extension and tracer layers add memory overhead to your function (about 69 MB for Python). Functions with less than 256 MB of memory can run out of memory or time out after instrumentation. When `memory_size` is below 256 MB (or unset, which defaults to 128 MB), the module emits a `lambda_low_memory` warning during `terraform plan` and `terraform apply` through a Terraform `check` block. The warning does not fail the run, and the function is still created and instrumented. Increase `memory_size` to at least 256, or set `suppress_low_memory_warning = true` to silence the warning.
+
 #### aws_lambda_function resource
 ```
 resource "aws_lambda_function" "example_lambda_function" {
@@ -335,6 +339,7 @@ No modules.
 | <a name="input_skip_destroy"></a> [skip\_destroy](#input\_skip\_destroy) | Set to true if you do not wish the function to be deleted at destroy time, and instead just remove the function from the Terraform state. | `bool`         | `null` | no |
 | <a name="input_snap_start_apply_on"></a> [snap\_start\_apply\_on](#input\_snap\_start\_apply\_on) | Conditions where snap start is enabled. | `string`       | `null` | no |
 | <a name="input_source_code_hash"></a> [source\_code\_hash](#input\_source\_code\_hash) | Used to trigger updates. Must be set to a base64-encoded SHA256 hash of the package file specified with either filename or s3\_key. | `string`       | `null` | no |
+| <a name="input_suppress_low_memory_warning"></a> [suppress\_low\_memory\_warning](#input\_suppress\_low\_memory\_warning) | Set to true to silence the warning emitted when the function's memory\_size (128 MB if unset) is below 256 MB. The Datadog Lambda Extension and tracer add memory overhead that can cause out-of-memory errors and timeouts on low-memory functions. | `bool`         | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Map of tags to assign to the object. | `map(string)`  | `null` | no |
 | <a name="input_timeout"></a> [timeout](#input\_timeout) | Amount of time your Lambda Function has to run in seconds. | `number`       | `null` | no |
 | <a name="input_tracing_config_mode"></a> [tracing\_config\_mode](#input\_tracing\_config\_mode) | Whether to sample and trace a subset of incoming requests with AWS X-Ray. | `string`       | `null` | no |
