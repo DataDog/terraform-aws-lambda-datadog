@@ -105,7 +105,7 @@ check "runtime_support" {
 
 check "low_memory" {
   assert {
-    condition     = var.suppress_low_memory_warning || local.effective_memory_size >= local.low_memory_threshold_mb
+    condition     = var.suppress_low_memory_warning ? true : local.effective_memory_size >= local.low_memory_threshold_mb
     error_message = "Function ${var.function_name} has ${local.effective_memory_size} MB of memory, below the recommended minimum of ${local.low_memory_threshold_mb} MB (lambda_low_memory). The Datadog Lambda Extension and tracer add memory overhead (about 70 MB for Python), which can cause out-of-memory errors and timeouts. Increase memory_size to at least ${local.low_memory_threshold_mb}, or set suppress_low_memory_warning = true to silence this warning."
   }
 }
