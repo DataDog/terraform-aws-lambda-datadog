@@ -85,10 +85,28 @@ locals {
   }
 }
 
+locals {
+  # Functions below this threshold are considered low-memory (reason code: lambda_low_memory).
+  # The Datadog Lambda Extension and tracer layers add memory overhead that can cause
+  # out-of-memory errors and timeouts on small functions.
+  low_memory_threshold_mb = 256
+
+  # aws_lambda_function defaults memory_size to 128 MB when it is not set.
+  aws_lambda_default_memory_size_mb = 128
+  effective_memory_size             = coalesce(var.memory_size, local.aws_lambda_default_memory_size_mb)
+}
+
 check "runtime_support" {
   assert {
     condition     = contains(keys(local.runtime_catalog), var.runtime)
     error_message = "${var.runtime} Lambda runtime is not supported by the lambda-datadog Terraform module"
+  }
+}
+
+check "low_memory" {
+  assert {
+    condition     = var.suppress_low_memory_warning ? true : local.effective_memory_size >= local.low_memory_threshold_mb
+    error_message = "Function ${var.function_name} has ${local.effective_memory_size} MB of memory, below the recommended minimum of ${local.low_memory_threshold_mb} MB (lambda_low_memory). The Datadog Lambda Extension and tracer add memory overhead (about 70 MB for Python), which can cause out-of-memory errors and timeouts. Increase memory_size to at least ${local.low_memory_threshold_mb}, or set suppress_low_memory_warning = true to silence this warning."
   }
 }
 
